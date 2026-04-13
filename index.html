@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IronMan 70.3 — Haynes FL — Dashboard de Treinos</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<title>IronMan 70.3 — Haynes FL</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
@@ -12,52 +11,31 @@
 :root{
   --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
   --text:#e6edf3;--muted:#7d8590;--border:rgba(255,255,255,0.08);
-  --accent:#00d4a8;--accent2:#ff6b35;--accent3:#4a9eff;
+  --accent:#00d4a8;--accent3:#4a9eff;
   --swim:#4a9eff;--bike:#ff9f1c;--run:#e63946;--gym:#a8dadc;
   --z1:#2d6a4f;--z2:#52b788;--z3:#f9c74f;--z4:#f8961e;--z5:#e63946;
-  --radius:10px;
 }
 html{scroll-behavior:smooth;}
 body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-a{color:var(--accent3);}
-
-/* LAYOUT */
 .app{max-width:960px;margin:0 auto;padding:1rem 1rem 3rem;}
-.hdr{text-align:center;padding:2rem 0 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1.5rem;}
-.hdr h1{font-size:28px;font-weight:700;color:var(--accent);letter-spacing:-0.5px;}
-.hdr p{font-size:12px;color:var(--muted);margin-top:4px;font-family:'DM Mono',monospace;}
-
-/* TABS */
-.tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:var(--bg2);border-radius:12px;padding:5px;border:1px solid var(--border);}
-.tab{flex:1;padding:9px 6px;border:none;border-radius:9px;cursor:pointer;font-family:'Syne',sans-serif;font-size:12px;font-weight:500;color:var(--muted);background:transparent;transition:all .2s;}
+.hdr{text-align:center;padding:1.5rem 0 1.2rem;border-bottom:1px solid var(--border);margin-bottom:1.2rem;}
+.hdr h1{font-size:26px;font-weight:700;color:var(--accent);letter-spacing:-0.5px;}
+.hdr p{font-size:11px;color:var(--muted);margin-top:4px;font-family:'DM Mono',monospace;}
+.tabs{display:flex;gap:4px;margin-bottom:1.2rem;background:var(--bg2);border-radius:12px;padding:5px;border:1px solid var(--border);}
+.tab{flex:1;padding:8px 4px;border:none;border-radius:8px;cursor:pointer;font-family:'Syne',sans-serif;font-size:11px;font-weight:500;color:var(--muted);background:transparent;transition:all .2s;}
 .tab:hover{color:var(--text);}
 .tab.on{background:var(--accent);color:#0a1628;}
-.sec{display:none;animation:fadeIn .2s ease;}
-.sec.on{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-
-/* CARDS */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.4rem;margin-bottom:14px;}
-.ct{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-family:'DM Mono',monospace;}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
-@media(max-width:600px){
-  .g2,.g3,.g4{grid-template-columns:1fr 1fr;}
-  .tabs{flex-wrap:wrap;}
-  .tab{flex:none;width:calc(50% - 2px);}
-  .wg{grid-template-columns:repeat(4,1fr)!important;}
-}
-@media(max-width:420px){
-  .g4{grid-template-columns:1fr 1fr;}
-}
-
-/* METRIC CARDS */
-.mc{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;text-align:center;}
-.mv{font-size:22px;font-weight:700;font-family:'DM Mono',monospace;}
-.ml{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-top:3px;}
-
-/* TIPS */
+.sec{display:none;animation:fi .2s ease;}.sec.on{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.4rem;margin-bottom:12px;}
+.ct{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-family:'DM Mono',monospace;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr 1fr;}.tabs{flex-wrap:wrap;}.tab{flex:none;width:calc(33% - 3px);}.wg{grid-template-columns:repeat(4,1fr)!important;}}
+.mc{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:11px 13px;text-align:center;}
+.mv{font-size:20px;font-weight:700;font-family:'DM Mono',monospace;}
+.ml{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-top:2px;}
 .tip{background:rgba(0,212,168,.05);border:1px solid rgba(0,212,168,.2);border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:10px;line-height:1.6;}
 .tip strong{color:var(--accent);}
 .tip.bl{background:rgba(74,158,255,.05);border-color:rgba(74,158,255,.2);}
@@ -66,94 +44,120 @@ a{color:var(--accent3);}
 .tip.or strong{color:var(--bike);}
 .tip.rd{background:rgba(230,57,70,.05);border-color:rgba(230,57,70,.2);}
 .tip.rd strong{color:var(--run);}
-
-/* COUNTDOWN */
-.cd{text-align:center;padding:1.5rem;background:rgba(0,212,168,.04);border:1px solid rgba(0,212,168,.18);border-radius:16px;margin-bottom:16px;}
-.cn{font-size:52px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;line-height:1;}
-.cl{font-size:12px;color:var(--muted);margin-top:6px;}
-
-/* ZONE BARS */
-.zr{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.zl{font-family:'DM Mono',monospace;font-size:12px;width:20px;color:var(--muted);}
-.zn{font-size:12px;width:110px;}
-.zv{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);width:95px;}
-.zf{height:8px;border-radius:4px;flex:1;}
+.tip.ok{background:rgba(82,183,136,.06);border-color:rgba(82,183,136,.3);}
+.tip.ok strong{color:var(--z2);}
+.cd{text-align:center;padding:1.2rem;background:rgba(0,212,168,.04);border:1px solid rgba(0,212,168,.18);border-radius:16px;margin-bottom:14px;}
+.cn{font-size:46px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;line-height:1;}
+.cl{font-size:11px;color:var(--muted);margin-top:4px;}
+.zr{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.zl{font-family:'DM Mono',monospace;font-size:11px;width:18px;color:var(--muted);}
+.zn{font-size:11px;width:105px;}
+.zv{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);width:90px;}
+.zf{height:7px;border-radius:3px;flex:1;}
 .pw{background:rgba(255,255,255,.07);border-radius:3px;height:5px;margin-top:3px;}
 .pf{height:5px;border-radius:3px;}
-
-/* WEEK GRID */
-.wg{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
-.dc{border-radius:10px;border:1px solid var(--border);background:var(--bg3);overflow:hidden;}
+.wg{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.dc{border-radius:9px;border:1px solid var(--border);background:var(--bg3);overflow:hidden;}
 .dc.hl{border-color:rgba(74,158,255,.45);}
-.dh{padding:7px 5px 6px;text-align:center;border-bottom:1px solid var(--border);}
+.dc.today{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,212,168,.2);}
+.dh{padding:6px 4px 5px;text-align:center;border-bottom:1px solid var(--border);}
 .dh.hl{background:rgba(74,158,255,.08);}
+.dh.today{background:rgba(0,212,168,.08);}
 .dn{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-family:'DM Mono',monospace;}
 .dn.hl{color:var(--accent3);}
-.db{padding:7px 6px;display:flex;flex-direction:column;gap:5px;min-height:85px;}
-.pi{border-radius:6px;padding:5px 7px;}
-.pt{font-weight:700;font-size:10px;line-height:1.3;}
-.pd{font-size:9px;opacity:.75;margin-top:2px;line-height:1.3;}
+.dn.today{color:var(--accent);}
+.db{padding:6px 5px;display:flex;flex-direction:column;gap:4px;min-height:75px;}
+.pi{border-radius:5px;padding:4px 6px;}
+.pt{font-weight:700;font-size:9px;line-height:1.3;}
+.pd{font-size:9px;opacity:.75;margin-top:1px;line-height:1.3;}
 .sw{background:rgba(74,158,255,.12);border:1px solid rgba(74,158,255,.25);color:var(--swim);}
 .bk{background:rgba(255,159,28,.12);border:1px solid rgba(255,159,28,.25);color:var(--bike);}
 .rn{background:rgba(230,57,70,.12);border:1px solid rgba(230,57,70,.25);color:var(--run);}
 .gm{background:rgba(168,218,220,.12);border:1px solid rgba(168,218,220,.25);color:var(--gym);}
 .rs{background:var(--bg2);border:1px solid var(--border);color:var(--muted);}
-
-/* BADGES */
+.done-pill{background:rgba(82,183,136,.12);border:1px solid rgba(82,183,136,.3);color:var(--z2);}
 .badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500;font-family:'DM Mono',monospace;}
 .base{background:rgba(74,158,255,.15);color:var(--accent3);}
 .build{background:rgba(255,159,28,.15);color:var(--bike);}
 .peak{background:rgba(230,57,70,.15);color:var(--run);}
 .taper{background:rgba(0,212,168,.15);color:var(--accent);}
 .race{background:rgba(0,212,168,.3);color:var(--accent);}
-
-/* WEEK NAV */
-.wnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.wnav button{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 16px;border-radius:9px;font-family:'Syne',sans-serif;cursor:pointer;font-size:12px;transition:border-color .2s;}
+.wnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.wnav button{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:8px;font-family:'Syne',sans-serif;cursor:pointer;font-size:12px;transition:border-color .2s;}
 .wnav button:hover{border-color:var(--accent);}
-
-/* LOG FORM */
-.fi{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:9px 13px;color:var(--text);font-family:'Syne',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.fi{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:8px 12px;color:var(--text);font-family:'Syne',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
 .fi:focus{border-color:var(--accent);}
 .fr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
 @media(max-width:600px){.fr{grid-template-columns:1fr 1fr;}}
-.fl{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;display:block;}
-.bs{background:var(--accent);color:#0a1628;border:none;border-radius:9px;padding:10px 24px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;}
+.fl{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;display:block;}
+.bs{background:var(--accent);color:#0a1628;border:none;border-radius:9px;padding:9px 22px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;}
 .bs:hover{opacity:.85;}
+.bs.sec-btn{background:var(--bg3);color:var(--text);border:1px solid var(--border);}
+.bs.sec-btn:hover{border-color:var(--accent);opacity:1;}
 input[type=range]{accent-color:var(--accent);}
-
-/* LOG ENTRIES */
-.le{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:8px;}
-.sc{max-height:400px;overflow-y:auto;padding-right:2px;}
+.le{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:7px;}
+.sc{max-height:380px;overflow-y:auto;padding-right:2px;}
 .sc::-webkit-scrollbar{width:3px;}
 .sc::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-
-/* PLAN LIST */
-.pl-sc{max-height:520px;overflow-y:auto;padding-right:2px;}
+.pl-sc{max-height:500px;overflow-y:auto;}
 .pl-sc::-webkit-scrollbar{width:3px;}
 .pl-sc::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-
-/* ANALYSIS */
-.cw{position:relative;width:100%;height:180px;}
+.cw{position:relative;width:100%;height:175px;}
 .ar{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;}
 .ar:last-child{border-bottom:none;}
-.good{color:var(--z2);} .warn{color:var(--z3);} .bad{color:var(--run);}
+.good{color:var(--z2);}.warn{color:var(--z3);}.bad{color:var(--run);}
 
-/* RACE PREVIEW */
-.race-bar{display:grid;grid-template-columns:1fr 1fr 1fr 28px 1fr;gap:8px;align-items:center;margin-top:8px;}
-.race-seg{text-align:center;}
-.race-lbl{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;}
-.race-val{font-size:20px;font-weight:700;margin-top:4px;}
-.race-total{text-align:center;background:rgba(0,212,168,.07);border:1px solid rgba(0,212,168,.2);border-radius:10px;padding:10px;}
+/* ===== TODAY SECTION ===== */
+.today-hero{background:linear-gradient(135deg,rgba(0,212,168,.06),rgba(74,158,255,.06));border:1px solid rgba(0,212,168,.25);border-radius:16px;padding:1.4rem;margin-bottom:14px;}
+.today-date{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.today-title{font-size:20px;font-weight:700;margin-bottom:4px;}
+.today-phase{font-size:12px;color:var(--muted);margin-bottom:14px;}
+.today-workouts{display:flex;flex-direction:column;gap:8px;}
+.workout-block{background:var(--bg2);border-radius:10px;padding:12px 14px;border:1px solid var(--border);}
+.workout-block.done-block{border-color:rgba(82,183,136,.35);background:rgba(82,183,136,.04);}
+.wb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.wb-sport{display:flex;align-items:center;gap:8px;}
+.sport-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.wb-title{font-size:14px;font-weight:500;}
+.wb-done-badge{background:rgba(82,183,136,.15);border:1px solid rgba(82,183,136,.3);color:var(--z2);font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;font-family:'DM Mono',monospace;}
+.wb-desc{font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.6;}
+.wb-target{display:flex;gap:10px;flex-wrap:wrap;}
+.wb-target-item{background:var(--bg3);border-radius:6px;padding:4px 10px;font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);}
+.wb-target-item span{color:var(--text);font-weight:500;}
+.wb-log-data{margin-top:10px;padding-top:10px;border-top:1px solid rgba(82,183,136,.2);}
+.wb-log-row{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);}
+.wb-log-row strong{color:var(--text);}
+.rest-day-msg{text-align:center;padding:1.5rem;color:var(--muted);}
+.reg-btn-today{background:rgba(0,212,168,.1);border:1px solid rgba(0,212,168,.3);color:var(--accent);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Syne',sans-serif;transition:all .2s;}
+.reg-btn-today:hover{background:rgba(0,212,168,.2);}
 
-/* GITHUB GUIDE */
-.step{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);}
+/* ===== GARMIN UPLOAD ===== */
+.garmin-zone{border:2px dashed rgba(74,158,255,.3);border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:rgba(74,158,255,.03);margin-bottom:12px;}
+.garmin-zone:hover,.garmin-zone.drag{border-color:var(--accent3);background:rgba(74,158,255,.07);}
+.garmin-zone input{display:none;}
+.garmin-icon{font-size:28px;margin-bottom:8px;}
+.garmin-label{font-size:14px;font-weight:500;color:var(--accent3);margin-bottom:4px;}
+.garmin-sub{font-size:11px;color:var(--muted);}
+.garmin-preview{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.garmin-thumb{position:relative;width:100px;height:80px;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.garmin-thumb img{width:100%;height:100%;object-fit:cover;}
+.garmin-thumb button{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.garmin-analyzing{background:rgba(74,158,255,.05);border:1px solid rgba(74,158,255,.2);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:12px;display:none;}
+.garmin-analyzing.show{display:block;}
+.spin{display:inline-block;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.garmin-result{background:rgba(0,212,168,.05);border:1px solid rgba(0,212,168,.2);border-radius:10px;padding:12px 16px;margin-bottom:12px;display:none;}
+.garmin-result.show{display:block;}
+.garmin-result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.gr-item{background:var(--bg3);border-radius:8px;padding:8px 10px;text-align:center;}
+.gr-val{font-size:16px;font-weight:700;font-family:'DM Mono',monospace;}
+.gr-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-top:2px;}
+.step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
 .step:last-child{border-bottom:none;}
-.step-num{width:28px;height:28px;border-radius:50%;background:rgba(0,212,168,.15);color:var(--accent);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'DM Mono',monospace;}
-.step-body{flex:1;}
-.step-title{font-weight:500;font-size:14px;margin-bottom:3px;}
+.step-num{width:26px;height:26px;border-radius:50%;background:rgba(0,212,168,.12);color:var(--accent);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'DM Mono',monospace;}
+.step-title{font-weight:500;font-size:13px;margin-bottom:2px;}
 .step-desc{font-size:12px;color:var(--muted);line-height:1.6;}
-.code{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--accent3);display:inline-block;margin-top:4px;}
+.code{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent3);}
 </style>
 </head>
 <body>
@@ -165,7 +169,7 @@ input[type=range]{accent-color:var(--accent);}
 </div>
 
 <div class="tabs">
-  <button class="tab on" onclick="st('ov',this)">Visão Geral</button>
+  <button class="tab on" onclick="st('ov',this)">Hoje</button>
   <button class="tab" onclick="st('pl',this)">Plano</button>
   <button class="tab" onclick="st('wk',this)">Semana</button>
   <button class="tab" onclick="st('lg',this)">Registrar</button>
@@ -173,7 +177,7 @@ input[type=range]{accent-color:var(--accent);}
   <button class="tab" onclick="st('gh',this)">GitHub</button>
 </div>
 
-<!-- ====== VISÃO GERAL ====== -->
+<!-- ====== HOJE ====== -->
 <div id="tab-ov" class="sec on">
   <div class="cd">
     <div class="cn" id="dc">—</div>
@@ -181,65 +185,48 @@ input[type=range]{accent-color:var(--accent);}
   </div>
 
   <div class="g4">
-    <div class="mc"><div class="mv" style="color:var(--accent3);font-size:14px;">Base 1</div><div class="ml">Fase atual</div></div>
-    <div class="mc"><div class="mv" style="font-size:14px;">116–139</div><div class="ml">Z2 bpm (Karvonen)</div></div>
-    <div class="mc"><div class="mv" id="ts">0</div><div class="ml">Treinos registrados</div></div>
-    <div class="mc"><div class="mv">46</div><div class="ml">VO2max Garmin</div></div>
+    <div class="mc"><div class="mv" style="color:var(--accent3);font-size:13px;" id="cur-phase">—</div><div class="ml">Fase atual</div></div>
+    <div class="mc"><div class="mv" style="font-size:13px;">116–139</div><div class="ml">Z2 bpm</div></div>
+    <div class="mc"><div class="mv" id="ts">0</div><div class="ml">Treinos feitos</div></div>
+    <div class="mc"><div class="mv" id="week-z2">—</div><div class="ml">Z2 esta semana</div></div>
+  </div>
+
+  <!-- TODAY HERO -->
+  <div class="today-hero">
+    <div class="today-date" id="today-date-label"></div>
+    <div class="today-title" id="today-week-info"></div>
+    <div class="today-phase" id="today-phase-info"></div>
+    <div class="today-workouts" id="today-workouts"></div>
   </div>
 
   <div class="g2">
     <div class="card">
-      <div class="ct">Zonas de FC recalibradas (Karvonen)</div>
-      <div class="zr"><span class="zl">Z1</span><span class="zn">Recuperação</span><span class="zv">&lt; 116 bpm</span><div class="zf" style="background:var(--z1);width:15%;"></div></div>
+      <div class="ct">Zonas de FC (Karvonen)</div>
+      <div class="zr"><span class="zl">Z1</span><span class="zn">Recuperação</span><span class="zv">&lt;116 bpm</span><div class="zf" style="background:var(--z1);width:15%;"></div></div>
       <div class="zr"><span class="zl">Z2</span><span class="zn">Base aeróbica</span><span class="zv">116–139 bpm</span><div class="zf" style="background:var(--z2);width:80%;"></div></div>
       <div class="zr"><span class="zl">Z3</span><span class="zn">Threshold</span><span class="zv">140–160 bpm</span><div class="zf" style="background:var(--z3);width:55%;"></div></div>
       <div class="zr"><span class="zl">Z4</span><span class="zn">VO2max</span><span class="zv">161–171 bpm</span><div class="zf" style="background:var(--z4);width:28%;"></div></div>
-      <div class="zr"><span class="zl">Z5</span><span class="zn">Anaeróbico</span><span class="zv">&gt; 172 bpm</span><div class="zf" style="background:var(--z5);width:8%;"></div></div>
-      <div style="font-size:10px;color:var(--muted);margin-top:10px;font-family:'DM Mono',monospace;">FC repouso: 54 bpm &nbsp;·&nbsp; FCmáx estimada: 178 bpm &nbsp;·&nbsp; Limiar lactato: ~163 bpm</div>
+      <div class="zr"><span class="zl">Z5</span><span class="zn">Anaeróbico</span><span class="zv">&gt;172 bpm</span><div class="zf" style="background:var(--z5);width:8%;"></div></div>
     </div>
     <div class="card">
-      <div class="ct">Distribuição alvo — método norueguês</div>
-      <div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span>Z1+Z2 fácil</span><span style="color:var(--z2);font-weight:500;">≥ 80%</span></div><div class="pw"><div class="pf" style="width:80%;background:var(--z2);"></div></div></div>
-      <div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span>Z3 threshold (2× semana)</span><span style="color:var(--z3);font-weight:500;">~15%</span></div><div class="pw"><div class="pf" style="width:15%;background:var(--z3);"></div></div></div>
-      <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span>Z4–Z5 alta intensidade</span><span style="color:var(--z4);font-weight:500;">&lt; 5%</span></div><div class="pw"><div class="pf" style="width:5%;background:var(--z4);"></div></div></div>
-      <div class="tip" style="margin-top:14px;font-size:12px;"><strong>Diagnóstico atual:</strong> FC média 134–140 bpm nos treinos = zona cinzenta. Objetivo nas próximas semanas: baixar para 125–132 bpm nos treinos fáceis.</div>
+      <div class="ct">Distribuição alvo — norueguês</div>
+      <div style="margin-bottom:9px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>Z1+Z2 fácil</span><span style="color:var(--z2);font-weight:500;">≥80%</span></div><div class="pw"><div class="pf" style="width:80%;background:var(--z2);"></div></div></div>
+      <div style="margin-bottom:9px;"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>Z3 threshold (2×/sem)</span><span style="color:var(--z3);font-weight:500;">~15%</span></div><div class="pw"><div class="pf" style="width:15%;background:var(--z3);"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>Z4–Z5</span><span style="color:var(--z4);font-weight:500;">&lt;5%</span></div><div class="pw"><div class="pf" style="width:5%;background:var(--z4);"></div></div></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6;">FC rep. 54 bpm · FCmáx est. 178 bpm · Limiar ~163 bpm</div>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="ct">Estrutura semanal — natação sex (fixo) + qua quando volume ≥ 5.500m</div>
-    <div class="wg" id="ov-wg"></div>
-  </div>
-
-  <div class="card">
-    <div class="ct">Previsão de tempo de prova (estimativa conservadora)</div>
-    <div class="race-bar">
-      <div class="race-seg"><div class="race-lbl">NATAÇÃO 1.9km</div><div class="race-val" style="color:var(--swim);">~40'</div></div>
-      <div class="race-seg"><div class="race-lbl">BIKE 90km</div><div class="race-val" style="color:var(--bike);">~2h45'</div></div>
-      <div class="race-seg"><div class="race-lbl">CORRIDA 21km</div><div class="race-val" style="color:var(--run);">~2h10'</div></div>
-      <div style="text-align:center;color:var(--muted);font-size:18px;">+</div>
-      <div class="race-total"><div class="race-lbl">TOTAL ESTIMADO</div><div class="race-val" style="color:var(--accent);">~6h15'</div></div>
-    </div>
-    <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">* Não inclui transições (~5–8min cada). Haynes, FL em dezembro: temperatura 18–25°C, umidade moderada. Condições favoráveis para uma boa prova.</div>
-  </div>
-
-  <div class="g3">
-    <div class="tip bl"><strong>Ritmo corrida Z2</strong><br><span style="font-size:12px;">6'30"–7'30"/km · FC 116–139</span></div>
-    <div class="tip or"><strong>Bike Z2</strong><br><span style="font-size:12px;">24–27 km/h · FC 116–139</span></div>
-    <div class="tip"><strong>Natação Z2</strong><br><span style="font-size:12px;">2'00"–2'20"/100m</span></div>
   </div>
 </div>
 
-<!-- ====== PLANO COMPLETO ====== -->
+<!-- ====== PLANO ====== -->
 <div id="tab-pl" class="sec">
-  <div class="tip"><strong>35 semanas · 4 fases.</strong> Natação: sextas (fixo) + quartas quando volume ≥ 5.500m (sem. 11+). Corrida e bike: seg, ter, qui, sáb. Academia ter+qui, Pilates seg. A cada 4ª semana: descarga de 30–35%.</div>
+  <div class="tip"><strong>35 semanas · 4 fases.</strong> Natação: sextas (fixo) + quartas quando volume ≥ 5.500m (sem. 11+). Corrida e bike: seg, ter, qui, sáb. Academia ter+qui, Pilates seg.</div>
   <div class="card">
-    <div style="display:grid;grid-template-columns:65px 1fr 78px 68px 68px;gap:8px;font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:6px;">
+    <div style="display:grid;grid-template-columns:60px 1fr 75px 65px 65px;gap:8px;font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;padding-bottom:7px;border-bottom:1px solid var(--border);margin-bottom:5px;">
       <span>Sem.</span><span>Fase / foco</span><span style="text-align:center;">Natação</span><span style="text-align:center;">Bike</span><span style="text-align:center;">Corrida</span>
     </div>
     <div class="pl-sc" id="pl-rows"></div>
   </div>
-  <div class="tip rd"><strong>Regra de progressão:</strong> Aumentar volume máximo 10% por semana. Nunca aumentar distância e intensidade na mesma semana. Semana de descarga a cada 4ª semana (redução de 30–35%).</div>
 </div>
 
 <!-- ====== SEMANA ====== -->
@@ -247,20 +234,46 @@ input[type=range]{accent-color:var(--accent);}
   <div class="wnav">
     <button onclick="cw(-1)">← anterior</button>
     <div style="text-align:center;">
-      <div style="font-size:14px;font-weight:500;" id="wt">Semana 1</div>
-      <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;" id="ws"></div>
+      <div style="font-size:13px;font-weight:500;" id="wt"></div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;" id="ws"></div>
     </div>
     <button onclick="cw(1)">próxima →</button>
   </div>
   <div class="tip" id="wn"></div>
   <div class="wg" id="wk-wg"></div>
-  <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px;font-family:'DM Mono',monospace;" id="wv"></div>
+  <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px;font-family:'DM Mono',monospace;" id="wv"></div>
 </div>
 
 <!-- ====== REGISTRAR ====== -->
 <div id="tab-lg" class="sec">
-  <div class="card" style="margin-bottom:14px;">
-    <div class="ct">Registrar treino</div>
+  <div class="card" style="margin-bottom:12px;">
+    <div class="ct">Analisar imagem do Garmin Connect</div>
+
+    <div class="garmin-zone" id="garmin-zone" onclick="document.getElementById('garmin-input').click()" ondragover="ev.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+      <input type="file" id="garmin-input" accept="image/*" multiple onchange="handleGarminFiles(event)">
+      <div class="garmin-icon">📊</div>
+      <div class="garmin-label">Arraste ou clique para anexar screenshots do Garmin</div>
+      <div class="garmin-sub">Aceita PNG, JPG — resumo de atividade, FC, dados de treino</div>
+    </div>
+
+    <div id="garmin-previews" class="garmin-preview"></div>
+
+    <div class="garmin-analyzing" id="garmin-analyzing">
+      <span class="spin">⟳</span> &nbsp;Analisando imagem com IA — extraindo FC, distância, pace, zonas...
+    </div>
+
+    <div class="garmin-result" id="garmin-result">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <strong style="color:var(--accent);font-size:13px;">✓ Dados extraídos pelo Garmin</strong>
+        <span style="font-size:11px;color:var(--muted);">Verifique e ajuste se necessário</span>
+      </div>
+      <div class="garmin-result-grid" id="garmin-result-grid"></div>
+      <div style="margin-top:10px;font-size:12px;color:var(--muted);" id="garmin-notes-preview"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:12px;">
+    <div class="ct">Dados do treino</div>
     <div class="fr">
       <div><label class="fl">Data</label><input type="date" class="fi" id="ld"></div>
       <div><label class="fl">Modalidade</label>
@@ -286,220 +299,449 @@ input[type=range]{accent-color:var(--accent);}
       <div><label class="fl">Duração (min)</label><input type="number" class="fi" id="ldu" placeholder="ex: 60"></div>
       <div><label class="fl">FC média (bpm)</label><input type="number" class="fi" id="lh" placeholder="ex: 132"></div>
     </div>
+    <div class="fr">
+      <div><label class="fl">FC máxima (bpm)</label><input type="number" class="fi" id="lhmax" placeholder="ex: 155"></div>
+      <div><label class="fl">Pace médio</label><input type="text" class="fi" id="lpace" placeholder="ex: 6:30/km ou 28km/h"></div>
+      <div><label class="fl">Calorias</label><input type="number" class="fi" id="lcal" placeholder="ex: 650"></div>
+    </div>
     <div style="margin-bottom:12px;">
       <label class="fl">Percepção de esforço (RPE): <span id="rv" style="color:var(--text);font-weight:500;font-size:14px;">6</span> / 10</label>
       <input type="range" min="1" max="10" value="6" step="1" id="lr" style="width:100%;margin-top:6px;" oninput="document.getElementById('rv').textContent=this.value">
     </div>
-    <div style="margin-bottom:14px;"><label class="fl">Observações</label><input type="text" class="fi" id="ln" placeholder="sensação, dores, condição climática..."></div>
-    <button class="bs" onclick="sl()">Salvar treino</button>
-    <span style="font-size:11px;color:var(--muted);margin-left:12px;" id="save-msg"></span>
+    <div style="margin-bottom:14px;"><label class="fl">Observações</label><input type="text" class="fi" id="ln" placeholder="sensação, condição climática, dores..."></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="bs" onclick="sl()">Salvar treino</button>
+      <button class="bs sec-btn" onclick="clearForm()">Limpar</button>
+      <span style="font-size:12px;color:var(--z2);" id="save-msg"></span>
+    </div>
   </div>
-  <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Histórico de treinos</div>
-  <div class="sc" id="le">
-    <div style="text-align:center;color:var(--muted);font-size:13px;padding:2rem;">Nenhum treino registrado ainda.</div>
-  </div>
+
+  <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Histórico</div>
+  <div class="sc" id="le"></div>
 </div>
 
 <!-- ====== ANÁLISE ====== -->
 <div id="tab-an" class="sec">
   <div class="g2">
-    <div class="card"><div class="ct">Volume por modalidade (minutos)</div><div class="cw"><canvas id="vc" role="img" aria-label="Volume por modalidade">Volume de treinos</canvas></div></div>
-    <div class="card"><div class="ct">Distribuição de zonas de FC</div><div class="cw"><canvas id="zc" role="img" aria-label="Zonas de FC">Distribuição de zonas</canvas></div></div>
+    <div class="card"><div class="ct">Volume por modalidade (min)</div><div class="cw"><canvas id="vc" role="img" aria-label="Volume por modalidade">Volume</canvas></div></div>
+    <div class="card"><div class="ct">Distribuição de zonas</div><div class="cw"><canvas id="zc" role="img" aria-label="Zonas">Zonas</canvas></div></div>
   </div>
-  <div class="card" style="margin-bottom:14px;">
+  <div class="card" style="margin-bottom:12px;">
     <div class="ct">Aderência ao método norueguês</div>
-    <div id="ac"><div style="text-align:center;color:var(--muted);font-size:13px;padding:1.5rem;">Registre treinos para ver a análise automática.</div></div>
+    <div id="ac"><div style="text-align:center;color:var(--muted);font-size:13px;padding:1.5rem;">Registre treinos para ver a análise.</div></div>
   </div>
   <div class="card">
-    <div class="ct">Recomendações fixas</div>
-    <div class="tip" style="margin-top:6px;"><strong>Zona cinzenta:</strong> FC média 134–140 bpm nos seus treinos. Reduza o ritmo até conseguir falar frases inteiras com conforto — isso é Z2 real (116–139 bpm).</div>
-    <div class="tip bl" style="margin-top:6px;"><strong>Natação (sexta):</strong> Dia ideal — após bloco ter+qui e antes do sábado longo. Foque em técnica de bracada e rolamento, não em distância bruta.</div>
-    <div class="tip or" style="margin-top:6px;"><strong>Double threshold (ter+qui):</strong> Bike na terça, corrida na quinta. Este é o núcleo do método norueguês — proteja essas sessões acima de tudo.</div>
-    <div class="tip rd" style="margin-top:6px;"><strong>Calor em Haynes:</strong> Em dezembro na Flórida, mesma FC = pace mais lento. Treine sempre por FC, nunca por pace. No dia da prova, saia conservador na bike.</div>
+    <div class="ct">Recomendações</div>
+    <div class="tip" style="margin-top:6px;"><strong>Zona cinzenta:</strong> FC média 134–140 bpm. Reduza até conseguir falar frases inteiras — isso é Z2 real.</div>
+    <div class="tip bl" style="margin-top:6px;"><strong>Natação (sexta):</strong> Após bloco ter+qui. Foco em técnica de bracada e rolamento.</div>
+    <div class="tip or" style="margin-top:6px;"><strong>Double threshold (ter+qui):</strong> Bike na terça, corrida na quinta. Núcleo do método norueguês.</div>
+    <div class="tip rd" style="margin-top:6px;"><strong>Calor em Haynes:</strong> Treine sempre por FC, nunca por pace. Na prova, saia conservador na bike.</div>
   </div>
 </div>
 
-<!-- ====== GITHUB GUIDE ====== -->
+<!-- ====== GITHUB ====== -->
 <div id="tab-gh" class="sec">
-  <div class="tip"><strong>Como hospedar online (grátis):</strong> Com o GitHub Pages você terá um link permanente tipo <span style="font-family:'DM Mono',monospace;color:var(--accent3);">seuusuario.github.io/ironman703</span> acessível de qualquer dispositivo.</div>
-
+  <div class="tip"><strong>Link permanente gratuito:</strong> GitHub Pages gera um link tipo <span style="font-family:'DM Mono',monospace;color:var(--accent3);">seuusuario.github.io/ironman703</span></div>
   <div class="card">
-    <div class="ct">Passo a passo — GitHub Pages (5 minutos)</div>
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <div class="step-title">Criar conta no GitHub</div>
-        <div class="step-desc">Acesse <a href="https://github.com" target="_blank">github.com</a> e crie uma conta gratuita se ainda não tiver. O plano gratuito já inclui o GitHub Pages.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <div class="step-title">Criar um novo repositório</div>
-        <div class="step-desc">Clique em <strong>New repository</strong>. Nomeie como <span class="code">ironman703</span>. Marque como <strong>Public</strong>. Clique em <strong>Create repository</strong>.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <div class="step-title">Fazer upload do arquivo HTML</div>
-        <div class="step-desc">Na página do repositório, clique em <strong>Add file → Upload files</strong>. Arraste o arquivo <span class="code">ironman703_dashboard.html</span> que você baixou. <strong>Renomeie para</strong> <span class="code">index.html</span> antes de subir (ou renomeie após o upload). Clique em <strong>Commit changes</strong>.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-body">
-        <div class="step-title">Ativar o GitHub Pages</div>
-        <div class="step-desc">Vá em <strong>Settings → Pages</strong> (menu lateral). Em <strong>Source</strong>, selecione <strong>Deploy from a branch</strong>. Em <strong>Branch</strong>, selecione <span class="code">main</span> e pasta <span class="code">/ (root)</span>. Clique em <strong>Save</strong>.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">5</div>
-      <div class="step-body">
-        <div class="step-title">Acessar seu dashboard</div>
-        <div class="step-desc">Após ~2 minutos, seu dashboard estará disponível em:<br><span class="code">https://seuusuario.github.io/ironman703</span><br>Salve nos favoritos e adicione à tela inicial do celular!</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">6</div>
-      <div class="step-body">
-        <div class="step-title">Adicionar à tela inicial (iPhone)</div>
-        <div class="step-desc">Abra o link no Safari → toque no ícone de compartilhar → <strong>Adicionar à Tela de Início</strong>. O dashboard vai aparecer como um app.</div>
-      </div>
-    </div>
+    <div class="ct">Passo a passo — GitHub Pages</div>
+    <div class="step"><div class="step-num">1</div><div><div class="step-title">Criar conta</div><div class="step-desc">Acesse <a href="https://github.com" target="_blank">github.com</a> e crie conta gratuita.</div></div></div>
+    <div class="step"><div class="step-num">2</div><div><div class="step-title">Novo repositório</div><div class="step-desc">Clique em <strong>New repository</strong>, nomeie <span class="code">ironman703</span>, marque <strong>Public</strong> e crie.</div></div></div>
+    <div class="step"><div class="step-num">3</div><div><div class="step-title">Upload do arquivo</div><div class="step-desc">Add file → Upload files → arraste este HTML. <strong>Renomeie para <span class="code">index.html</span></strong> → Commit changes.</div></div></div>
+    <div class="step"><div class="step-num">4</div><div><div class="step-title">Ativar Pages</div><div class="step-desc">Settings → Pages → Source: <strong>Deploy from branch</strong> → Branch: <span class="code">main</span> / <span class="code">root</span> → Save.</div></div></div>
+    <div class="step"><div class="step-num">5</div><div><div class="step-title">Seu link</div><div class="step-desc">Após ~2 min: <span class="code">https://seuusuario.github.io/ironman703</span> — salve nos favoritos e adicione à tela inicial do iPhone (Safari → Compartilhar → Adicionar à Tela de Início).</div></div></div>
   </div>
-
-  <div class="tip bl">
-    <strong>Atenção sobre os dados:</strong> Os treinos registrados ficam salvos no <strong>localStorage do navegador</strong> — ou seja, ficam no dispositivo que você usar para registrar. Se quiser acessar os dados em vários dispositivos, a solução mais simples é sempre registrar no mesmo aparelho (ex: sempre no celular). Para backup, use o botão abaixo para exportar seus dados.
-  </div>
-
+  <div class="tip bl"><strong>Sobre os dados:</strong> Os treinos ficam salvos no localStorage do navegador do dispositivo que você usar. Exporte regularmente como backup.</div>
   <div class="card">
     <div class="ct">Backup dos dados</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
-      <button class="bs" onclick="exportData()">Exportar dados (JSON)</button>
-      <button style="background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:10px 24px;font-family:'Syne',sans-serif;font-size:14px;font-weight:500;cursor:pointer;" onclick="importData()">Importar dados</button>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+      <button class="bs" onclick="exportData()">Exportar JSON</button>
+      <button class="bs sec-btn" onclick="document.getElementById('import-file').click()">Importar JSON</button>
     </div>
     <input type="file" id="import-file" accept=".json" style="display:none" onchange="loadImport(event)">
-    <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Exporte regularmente para ter backup dos seus treinos. Para migrar entre dispositivos, exporte no dispositivo atual e importe no novo.</div>
   </div>
 </div>
 
-</div><!-- /app -->
+</div>
+
+<!-- ===== API KEY MODAL ===== -->
+<div id="apiModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;align-items:center;justify-content:center;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.5rem;max-width:420px;width:90%;">
+    <div style="font-size:16px;font-weight:700;margin-bottom:6px;">Configurar chave da API</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Para analisar imagens do Garmin com IA, insira sua chave da API Anthropic. Ela fica salva apenas no seu navegador (localStorage) e nunca é enviada a terceiros.</div>
+    <label class="fl">Chave API Anthropic (sk-ant-...)</label>
+    <input type="password" class="fi" id="api-key-input" placeholder="sk-ant-api03-...">
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button class="bs" onclick="saveApiKey()">Salvar chave</button>
+      <button class="bs sec-btn" onclick="document.getElementById('apiModal').style.display='none'">Cancelar</button>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Obtenha sua chave em <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. Cada análise de imagem consome créditos mínimos (~$0.003).</div>
+  </div>
+</div>
 
 <script>
-// =================== DATA ===================
+// =================== CONSTANTS ===================
 const PS = new Date('2026-04-28');
 const RACE = new Date('2026-12-13');
-document.getElementById('dc').textContent = Math.max(0,Math.round((RACE-new Date())/86400000));
-document.getElementById('ld').valueAsDate = new Date();
 
 const PLAN=[
-  {w:1,ph:'Base 1',b:'base',f:'Adaptação ao volume',sw:2500,bk:60,rn:50,n:'Tudo Z1/Z2. FC abaixo de 135 bpm em todos os treinos. Natação somente sexta.'},
-  {w:2,ph:'Base 1',b:'base',f:'Construção aeróbica',sw:3000,bk:75,rn:60,n:'Z2 constante. Brick sábado: 30min bike + 15min corrida imediata.'},
-  {w:3,ph:'Base 1',b:'base',f:'Consolidação',sw:3500,bk:90,rn:70,n:'Brick sáb: 45min bike + 15min corrida. Natação sexta com foco técnico.'},
-  {w:4,ph:'Base 1',b:'base',f:'Recuperação ativa ↓',sw:2000,bk:50,rn:40,n:'Semana de descarga — reduzir 35% do volume. Sem threshold. Nada leve na sexta.'},
-  {w:5,ph:'Base 1',b:'base',f:'Retomada progressiva',sw:3500,bk:90,rn:70,n:'Retomar ritmo. Natação sexta: primeiro 400m contínuo sem parar.'},
-  {w:6,ph:'Base 1',b:'base',f:'Consolidação de base',sw:4000,bk:100,rn:75,n:'Brick sáb 60+20min. FC média dos treinos deve estar abaixo de 132 bpm.'},
-  {w:7,ph:'Base 2',b:'base',f:'Introdução ao threshold',sw:4500,bk:120,rn:80,n:'Double threshold ter+qui: 3×8min Z3 na bike (ter) e corrida (qui). Resto Z2.'},
-  {w:8,ph:'Base 2',b:'base',f:'Resistência aeróbica',sw:5000,bk:135,rn:90,n:'Bike longa sáb: 2h Z2. Corrida dom: 75min Z2. Natação sexta: 2.500m.'},
-  {w:9,ph:'Base 2',b:'base',f:'Consistência',sw:5000,bk:140,rn:95,n:'Brick sáb: 90min bike + 30min corrida. Natação sexta: 3×500m com descanso.'},
-  {w:10,ph:'Base 2',b:'base',f:'Recuperação ativa ↓',sw:3000,bk:80,rn:55,n:'Descarga. Sem threshold. Natação sexta somente técnica (drills).'},
-  {w:11,ph:'Base 2',b:'base',f:'Volume crescente',sw:5500,bk:150,rn:100,n:'NATAÇÃO QUA + SEX (2 sessões a partir de agora). 400m no ritmo de prova.'},
+  {w:1,ph:'Base 1',b:'base',f:'Adaptação ao volume',sw:2500,bk:60,rn:50,n:'Tudo Z1/Z2. FC abaixo de 135 bpm. Natação somente sexta.'},
+  {w:2,ph:'Base 1',b:'base',f:'Construção aeróbica',sw:3000,bk:75,rn:60,n:'Z2 constante. Brick sábado: 30min bike + 15min corrida.'},
+  {w:3,ph:'Base 1',b:'base',f:'Consolidação',sw:3500,bk:90,rn:70,n:'Brick sáb: 45min bike + 15min corrida. Natação sexta: foco técnico.'},
+  {w:4,ph:'Base 1',b:'base',f:'Recuperação ativa ↓',sw:2000,bk:50,rn:40,n:'Descarga — reduzir 35% do volume. Sem threshold.'},
+  {w:5,ph:'Base 1',b:'base',f:'Retomada progressiva',sw:3500,bk:90,rn:70,n:'Retomar ritmo. Natação sexta: primeiro 400m contínuo.'},
+  {w:6,ph:'Base 1',b:'base',f:'Consolidação de base',sw:4000,bk:100,rn:75,n:'Brick sáb 60+20min. FC média deve estar abaixo de 132.'},
+  {w:7,ph:'Base 2',b:'base',f:'Introdução ao threshold',sw:4500,bk:120,rn:80,n:'Double threshold ter+qui: 3×8min Z3 na bike e corrida.'},
+  {w:8,ph:'Base 2',b:'base',f:'Resistência aeróbica',sw:5000,bk:135,rn:90,n:'Bike longa sáb: 2h Z2. Corrida dom: 75min Z2.'},
+  {w:9,ph:'Base 2',b:'base',f:'Consistência',sw:5000,bk:140,rn:95,n:'Brick sáb: 90min bike + 30min corrida. Natação sex: 3×500m.'},
+  {w:10,ph:'Base 2',b:'base',f:'Recuperação ativa ↓',sw:3000,bk:80,rn:55,n:'Descarga. Sem threshold. Natação sexta somente técnica.'},
+  {w:11,ph:'Base 2',b:'base',f:'Volume crescente',sw:5500,bk:150,rn:100,n:'NATAÇÃO QUA + SEX (2 sessões). 400m no ritmo de prova.'},
   {w:12,ph:'Base 2',b:'base',f:'Pico de base',sw:6000,bk:165,rn:110,n:'Maior semana de base. Brick sáb: 2h+45min todo Z2.'},
-  {w:13,ph:'Build 1',b:'build',f:'Threshold inicial',sw:6000,bk:160,rn:110,n:'Double threshold: 4×10min Z3. Natação qua+sex. Manter 80% treinos em Z2.'},
-  {w:14,ph:'Build 1',b:'build',f:'Especificidade 70.3',sw:6000,bk:170,rn:115,n:'Brick sáb: 2h15+40min. Simular pace de prova nos últimos 20min.'},
-  {w:15,ph:'Build 1',b:'build',f:'Intensidade controlada',sw:6000,bk:175,rn:120,n:'Corrida dom: 90min com últimos 15min em Z3. Bike ter com threshold.'},
-  {w:16,ph:'Build 1',b:'build',f:'Recuperação ativa ↓',sw:3500,bk:90,rn:65,n:'Descarga. Natação técnica sexta. Avaliar FC repouso e sinais de fadiga.'},
+  {w:13,ph:'Build 1',b:'build',f:'Threshold inicial',sw:6000,bk:160,rn:110,n:'Double threshold: 4×10min Z3. Natação qua+sex.'},
+  {w:14,ph:'Build 1',b:'build',f:'Especificidade 70.3',sw:6000,bk:170,rn:115,n:'Brick sáb: 2h15+40min. Simular pace de prova.'},
+  {w:15,ph:'Build 1',b:'build',f:'Intensidade controlada',sw:6000,bk:175,rn:120,n:'Corrida dom: 90min com últimos 15min Z3.'},
+  {w:16,ph:'Build 1',b:'build',f:'Recuperação ativa ↓',sw:3500,bk:90,rn:65,n:'Descarga. Natação técnica sexta. Avaliar FC repouso.'},
   {w:17,ph:'Build 1',b:'build',f:'Volume + intensidade',sw:6500,bk:180,rn:125,n:'Brick sáb: 2h30+45min. Threshold ter+qui 4×10min Z3.'},
-  {w:18,ph:'Build 1',b:'build',f:'Consolidação build',sw:6500,bk:185,rn:130,n:'Natação qua+sex: foco em 800m contínuo. Manter padrão de threshold.'},
-  {w:19,ph:'Build 2',b:'build',f:'Volume máximo',sw:7000,bk:200,rn:135,n:'Carga máxima do ciclo. Brick sáb: 3h+50min. Foco em nutrição no longo.'},
-  {w:20,ph:'Build 2',b:'build',f:'Específico 70.3',sw:7000,bk:200,rn:140,n:'Simular distâncias de prova em dias separados esta semana.'},
-  {w:21,ph:'Build 2',b:'build',f:'Recuperação ativa ↓',sw:4000,bk:110,rn:80,n:'Descarga mid-plan obrigatória. Natação técnica apenas. Sono e alimentação.'},
-  {w:22,ph:'Build 2',b:'build',f:'Retomada forte',sw:7000,bk:210,rn:140,n:'Threshold 3× semana (ter/qui/sáb moderado). Brick sáb: 2h45+50min.'},
-  {w:23,ph:'Build 2',b:'build',f:'Pico de intensidade',sw:7000,bk:210,rn:145,n:'1× sessão VO2max bike (4×3min Z4). Natação qua+sex. Threshold na corrida.'},
-  {w:24,ph:'Build 2',b:'build',f:'Consolidação',sw:7000,bk:205,rn:145,n:'Manter carga. Semana de foco em nutrição, sono e recuperação.'},
-  {w:25,ph:'Peak',b:'peak',f:'Simulação de prova',sw:7000,bk:200,rn:140,n:'Simular 70.3 completo em 2 dias: bike+corrida sáb, natação dom.'},
-  {w:26,ph:'Peak',b:'peak',f:'Recuperação pós-sim.',sw:3500,bk:100,rn:70,n:'Recuperação ativa pós-simulação. Natação leve sexta. Avalie o que sentiu.'},
-  {w:27,ph:'Peak',b:'peak',f:'Pico físico',sw:7000,bk:210,rn:145,n:'Maior semana do ciclo. Máxima aderência ao plano. Foco total.'},
-  {w:28,ph:'Peak',b:'peak',f:'Carga de choque',sw:7000,bk:200,rn:140,n:'Brick de prova: 2h bike Z2+Z3 seguido de corrida 1h Z2+Z3.'},
-  {w:29,ph:'Peak',b:'peak',f:'Descarga peak',sw:4000,bk:120,rn:85,n:'Transição para taper. Reduzir 30% do volume. Intensidade mantida.'},
-  {w:30,ph:'Taper',b:'taper',f:'Início do taper',sw:5000,bk:150,rn:100,n:'Manter intensidade das sessões, reduzir volume 20%. Sem novidades.'},
-  {w:31,ph:'Taper',b:'taper',f:'Taper progressivo',sw:4000,bk:120,rn:80,n:'Reduzir 35% do volume. Manter 2 sessões de qualidade. Natação sexta.'},
-  {w:32,ph:'Taper',b:'taper',f:'Taper intenso',sw:3000,bk:90,rn:60,n:'Reduzir 50% do volume. Absolutamente nenhum treino extenuante.'},
-  {w:33,ph:'Taper',b:'taper',f:'Descanso ativo',sw:2000,bk:60,rn:40,n:'Sessões curtíssimas e leves. Priorize sono, alimentação e hidratação.'},
-  {w:34,ph:'Taper',b:'taper',f:'Semana da prova',sw:1500,bk:40,rn:25,n:'Viagem para Haynes. Reconhecer o percurso. Treinos apenas para ativar as pernas.'},
-  {w:35,ph:'Prova!',b:'race',f:'IronMan 70.3 Haynes, FL',sw:1900,bk:90,rn:21,n:'Execução do plano. Sair devagar na natação (FC baixa). Manter Z2 na bike TODO o tempo. Corrida: comece em Z2 e avalie km a km.'},
+  {w:18,ph:'Build 1',b:'build',f:'Consolidação build',sw:6500,bk:185,rn:130,n:'Natação qua+sex: foco em 800m contínuo.'},
+  {w:19,ph:'Build 2',b:'build',f:'Volume máximo',sw:7000,bk:200,rn:135,n:'Carga máxima do ciclo. Brick sáb: 3h+50min.'},
+  {w:20,ph:'Build 2',b:'build',f:'Específico 70.3',sw:7000,bk:200,rn:140,n:'Simular distâncias de prova em dias separados.'},
+  {w:21,ph:'Build 2',b:'build',f:'Recuperação ativa ↓',sw:4000,bk:110,rn:80,n:'Descarga mid-plan obrigatória. Natação técnica apenas.'},
+  {w:22,ph:'Build 2',b:'build',f:'Retomada forte',sw:7000,bk:210,rn:140,n:'Threshold 3× semana. Brick sáb: 2h45+50min.'},
+  {w:23,ph:'Build 2',b:'build',f:'Pico de intensidade',sw:7000,bk:210,rn:145,n:'1× VO2max bike (4×3min Z4). Natação qua+sex.'},
+  {w:24,ph:'Build 2',b:'build',f:'Consolidação',sw:7000,bk:205,rn:145,n:'Manter carga. Foco em nutrição e sono.'},
+  {w:25,ph:'Peak',b:'peak',f:'Simulação de prova',sw:7000,bk:200,rn:140,n:'Simular 70.3 em 2 dias: bike+corrida sáb, natação dom.'},
+  {w:26,ph:'Peak',b:'peak',f:'Recuperação pós-sim.',sw:3500,bk:100,rn:70,n:'Recuperação ativa. Natação leve sexta.'},
+  {w:27,ph:'Peak',b:'peak',f:'Pico físico',sw:7000,bk:210,rn:145,n:'Maior semana do ciclo. Máxima aderência.'},
+  {w:28,ph:'Peak',b:'peak',f:'Carga de choque',sw:7000,bk:200,rn:140,n:'Brick de prova: 2h bike + corrida 1h, Z2+Z3.'},
+  {w:29,ph:'Peak',b:'peak',f:'Descarga peak',sw:4000,bk:120,rn:85,n:'Transição para taper. Reduzir 30%.'},
+  {w:30,ph:'Taper',b:'taper',f:'Início do taper',sw:5000,bk:150,rn:100,n:'Manter intensidade, reduzir volume 20%.'},
+  {w:31,ph:'Taper',b:'taper',f:'Taper progressivo',sw:4000,bk:120,rn:80,n:'Reduzir 35% volume. 2 sessões de qualidade.'},
+  {w:32,ph:'Taper',b:'taper',f:'Taper intenso',sw:3000,bk:90,rn:60,n:'Reduzir 50% volume. Sem extenuantes.'},
+  {w:33,ph:'Taper',b:'taper',f:'Descanso ativo',sw:2000,bk:60,rn:40,n:'Sessões leves e curtas. Priorize sono.'},
+  {w:34,ph:'Taper',b:'taper',f:'Semana da prova',sw:1500,bk:40,rn:25,n:'Viagem, reconhecer percurso. Treinos mínimos.'},
+  {w:35,ph:'Prova!',b:'race',f:'IronMan 70.3 Haynes FL',sw:1900,bk:90,rn:21,n:'Sair devagar na natação. Manter Z2 na bike todo o tempo. Corrida: comece em Z2.'},
 ];
 
-// Estrutura da semana
-const DAYS_TPL=[
-  {s:'SEG',hl:false,fixed:[{c:'rn',t:'Corrida Z2',d:'40–70min · FC 116–135'},{c:'gm',t:'Pilates',d:'60min · core + mobilidade'}]},
-  {s:'TER',hl:false,fixed:[{c:'bk',t:'Bike threshold',d:'Z3 séries · resto Z2'},{c:'gm',t:'Academia',d:'30min · força funcional'}]},
-  {s:'QUA',hl:false,fixed:[]},
-  {s:'QUI',hl:false,fixed:[{c:'rn',t:'Corrida threshold',d:'Double threshold Z3'},{c:'gm',t:'Academia',d:'30min · posterior + core'}]},
-  {s:'SEX★',hl:true,fixed:[{c:'sw',t:'Natação Z2',d:'Fixo · foco técnico'}]},
-  {s:'SÁB',hl:false,fixed:[{c:'bk',t:'Bike longa Z2',d:'Sessão chave'},{c:'rn',t:'Brick corrida',d:'Imediato após bike'}]},
-  {s:'DOM',hl:false,fixed:[{c:'rn',t:'Corrida longa Z2',d:'Ritmo conversacional'}]},
-];
+// Weekly structure per day-of-week (0=Sun)
+const DAY_PLAN = {
+  0: [{c:'rn',t:'Corrida longa Z2',sport:'run'}],                                   // Dom
+  1: [{c:'rn',t:'Corrida Z2',sport:'run'},{c:'gm',t:'Pilates',sport:'gym'}],        // Seg
+  2: [{c:'bk',t:'Bike threshold (Z3)',sport:'bike'},{c:'gm',t:'Academia',sport:'gym'}], // Ter
+  3: null,                                                                            // Qua (optional swim)
+  4: [{c:'rn',t:'Corrida threshold (Z3)',sport:'run'},{c:'gm',t:'Academia',sport:'gym'}], // Qui
+  5: [{c:'sw',t:'Natação Z2',sport:'swim'}],                                         // Sex
+  6: [{c:'bk',t:'Bike longa Z2',sport:'bike'},{c:'rn',t:'Brick corrida',sport:'run'}], // Sáb
+};
 
-function buildGrid(wData){
-  const ts = wData ? wData.sw >= 5500 : false;
-  return DAYS_TPL.map(d=>{
-    let pills = [...d.fixed];
-    if(d.s==='QUA'){
-      pills = ts ? [{c:'sw',t:'Natação Z2',d:`${wData?Math.round(wData.sw*.35):1500}m · técnico`}]
-                 : [{c:'rs',t:'Descanso ativo',d:'caminhada · alongamento'}];
-    }
-    if(wData){
-      if(d.s==='SEX★') pills=[{c:'sw',t:'Natação Z2',d:`${ts?Math.round(wData.sw*.6):wData.sw}m · fixo`}];
-      if(d.s==='SÁB') pills=[{c:'bk',t:'Bike longa Z2',d:`${Math.round(wData.bk*.55)}min`},{c:'rn',t:'Brick corrida',d:`${Math.round(wData.rn*.2)}min após`}];
-      if(d.s==='DOM') pills=[{c:'rn',t:'Corrida longa Z2',d:`${Math.round(wData.rn*.4)}min`}];
-      if(d.s==='TER') pills=[{c:'bk',t:'Bike threshold',d:`${Math.round(wData.bk*.45)}min · Z3 séries`},{c:'gm',t:'Academia',d:'30min força'}];
-      if(d.s==='QUI') pills=[{c:'rn',t:'Corrida threshold',d:`${Math.round(wData.rn*.3)}min · Z3`},{c:'gm',t:'Academia',d:'30min posterior'}];
-      if(d.s==='SEG') pills=[{c:'rn',t:'Corrida Z2',d:`${Math.round(wData.rn*.35)}min`},{c:'gm',t:'Pilates',d:'60min core'}];
-    }
-    return `<div class="dc${d.hl?' hl':''}">
-      <div class="dh${d.hl?' hl':''}"><div class="dn${d.hl?' hl':''}">${d.s}</div></div>
-      <div class="db">${pills.map(p=>`<div class="pi ${p.c}"><div class="pt">${p.t}</div><div class="pd">${p.d}</div></div>`).join('')}</div>
+const DAY_DETAILS = {
+  0:{desc:'Corrida longa em Z2 puro. Ritmo conversacional do início ao fim — se não consegue falar, está rápido demais.',targets:['Z2 · 116–135 bpm','60–90min','6\'30"–7\'30"/km']},
+  1:{desc:'Corrida Z2 + Pilates. A corrida é o aquecimento da semana — leve, FC baixa. Pilates foca em mobilidade de quadril e força de core.',targets:['Z2 · 116–135 bpm','40–70min','Pilates 60min']},
+  2:{desc:'Bike com double threshold (núcleo do método norueguês). Aqueça 15min Z2, faça as séries Z3, esfrie 10min Z2. Academia: posteriores e glúteos.',targets:['3–4×8min Z3','140–158 bpm nas séries','Academia 30min']},
+  3:{desc:'Descanso ativo ou natação técnica (a partir da semana 11). Se nadar: drills, foco em técnica de bracada e rolamento — sem pressa.',targets:['Descanso ou natação técnica','FC baixa · Z1']},
+  4:{desc:'Corrida com double threshold (o segundo treino de qualidade da semana). Mesma estrutura da terça, mas correndo. Academia: posterior de coxa e core.',targets:['3–4×8min Z3','140–158 bpm nas séries','Academia 30min']},
+  5:{desc:'Natação Z2 — dia fixo de piscina. Aproveite para trabalhar técnica: entrada da mão, rotação do tronco, kick. Não force distância.',targets:['1.500–3.500m','Z2 · FC baixa na água','Foco técnico']},
+  6:{desc:'Maior bloco da semana. Bike longa em Z2 absoluto seguida de corrida imediata (brick) para treinar a transição T2 e as pernas pesadas.',targets:['Bike 90–180min Z2','Brick corrida 20–50min','Todo em Z2']},
+};
+
+// =================== STATE ===================
+let logs = [];
+let garminImages = [];
+try{ logs = JSON.parse(localStorage.getItem('im703v3') || '[]'); }catch(e){}
+
+// =================== INIT ===================
+function init(){
+  const today = new Date();
+  document.getElementById('dc').textContent = Math.max(0,Math.round((RACE-today)/86400000));
+  document.getElementById('ld').valueAsDate = today;
+
+  // current week
+  const diff = Math.floor((today - PS) / 86400000 / 7);
+  const wi = Math.max(0, Math.min(PLAN.length-1, diff));
+  const p = PLAN[wi];
+  document.getElementById('cur-phase').textContent = `${p.ph} · Sem ${p.w}`;
+
+  document.getElementById('today-date-label').textContent =
+    today.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('today-week-info').textContent = `Semana ${p.w} de 35`;
+  document.getElementById('today-phase-info').textContent = `${p.ph} — ${p.f}`;
+
+  renderTodayWorkouts(today, p);
+  renderWeekZ2();
+  renderLogs();
+  renderPlan();
+  renderWeekView(wi);
+}
+
+// =================== TODAY ===================
+function renderTodayWorkouts(today, planWeek){
+  const dow = today.getDay(); // 0=sun
+  const ts2 = planWeek.sw >= 5500;
+  let dayPlan = DOW_getPlan(dow, ts2, planWeek);
+  const dateStr = today.toISOString().slice(0,10);
+  const todayLogs = logs.filter(l => l.date === dateStr);
+
+  const el = document.getElementById('today-workouts');
+  if(!dayPlan || !dayPlan.length){
+    el.innerHTML = `<div class="rest-day-msg">🧘 Dia de descanso ativo — caminhada leve, mobilidade, foam roller.</div>`;
+    return;
+  }
+
+  el.innerHTML = dayPlan.map((w,i) => {
+    const done = todayLogs.find(l => l.sport === w.sport);
+    const det = DAY_DETAILS[dow];
+    const tgt = det && det.targets ? det.targets : [];
+    return `
+    <div class="workout-block ${done?'done-block':''}">
+      <div class="wb-header">
+        <div class="wb-sport">
+          <div class="sport-dot" style="background:${sportColor(w.sport)};"></div>
+          <span class="wb-title">${w.t}</span>
+        </div>
+        ${done ? `<span class="wb-done-badge">✓ FEITO</span>` : `<button class="reg-btn-today" onclick="goRegister('${w.sport}')">+ Registrar</button>`}
+      </div>
+      <div class="wb-desc">${det ? det.desc : ''}</div>
+      <div class="wb-target">
+        ${tgt.map(t=>`<div class="wb-target-item">${t}</div>`).join('')}
+      </div>
+      ${done ? `
+      <div class="wb-log-data">
+        <div class="wb-log-row">
+          ${done.dur?`<span>⏱ <strong>${done.dur}min</strong></span>`:''}
+          ${done.dist?`<span>📏 <strong>${done.dist}${done.sport==='swim'?'m':'km'}</strong></span>`:''}
+          ${done.hr?`<span>💓 <strong>${done.hr}bpm</strong> média</span>`:''}
+          ${done.hrmax?`<span>💓 <strong>${done.hrmax}bpm</strong> máx</span>`:''}
+          ${done.pace?`<span>🏃 <strong>${done.pace}</strong></span>`:''}
+          <span>RPE <strong>${done.rpe}/10</strong></span>
+          <span class="badge ${done.zone.toLowerCase()}" style="font-size:10px;">${done.zone}</span>
+        </div>
+        ${done.notes?`<div style="font-size:11px;color:var(--muted);margin-top:6px;font-style:italic;">"${done.notes}"</div>`:''}
+      </div>` : ''}
     </div>`;
   }).join('');
 }
 
-document.getElementById('ov-wg').innerHTML = buildGrid(null);
-
-// Plan list
-document.getElementById('pl-rows').innerHTML = PLAN.map(p=>`
-  <div style="display:grid;grid-template-columns:65px 1fr 78px 68px 68px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;">
-    <span style="font-family:'DM Mono',monospace;color:var(--muted);">Sem ${p.w}</span>
-    <div><span class="badge ${p.b}">${p.ph}</span><span style="margin-left:6px;">${p.f}</span></div>
-    <span style="text-align:center;color:var(--swim);font-family:'DM Mono',monospace;">${p.sw}m</span>
-    <span style="text-align:center;color:var(--bike);font-family:'DM Mono',monospace;">${p.bk}'</span>
-    <span style="text-align:center;color:var(--run);font-family:'DM Mono',monospace;">${p.rn}'</span>
-  </div>
-`).join('');
-
-// Week nav
-let wi=0;
-function rw(){
-  const p=PLAN[wi];
-  document.getElementById('wt').textContent=`Semana ${p.w} — ${p.ph}: ${p.f}`;
-  const s=new Date(PS); s.setDate(s.getDate()+wi*7);
-  const e=new Date(s); e.setDate(e.getDate()+6);
-  document.getElementById('ws').textContent=
-    s.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' – '+
-    e.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
-  document.getElementById('wn').innerHTML=`<strong>Foco da semana:</strong> ${p.n}`;
-  document.getElementById('wk-wg').innerHTML=buildGrid(p);
-  const ts=p.sw>=5500;
-  document.getElementById('wv').textContent=
-    `Natação ${p.sw}m · Bike ${p.bk}min · Corrida ${p.rn}min  ·  ${ts?'Natação: quarta + sexta (2 sessões)':'Natação: somente sexta'}`;
+function DOW_getPlan(dow, ts2, pw){
+  if(dow===3) return ts2 ? [{c:'sw',t:'Natação Z2 (opcional)',sport:'swim'}] : null;
+  return DAY_PLAN[dow] || null;
 }
-function cw(d){wi=Math.max(0,Math.min(PLAN.length-1,wi+d));rw();}
-rw();
+
+function sportColor(s){
+  return {swim:'var(--swim)',bike:'var(--bike)',run:'var(--run)',gym:'var(--gym)',brick:'var(--accent)'}[s]||'#888';
+}
+
+function goRegister(sport){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tab-lg').classList.add('on');
+  document.querySelector('.tab[onclick*="lg"]').classList.add('on');
+  document.getElementById('ls').value = sport;
+}
+
+// =================== WEEK Z2 STAT ===================
+function renderWeekZ2(){
+  const today = new Date();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((today.getDay()+6)%7));
+  monday.setHours(0,0,0,0);
+  const sunday = new Date(monday); sunday.setDate(monday.getDate()+7);
+  const weekLogs = logs.filter(l=>{const d=new Date(l.date);return d>=monday&&d<sunday;});
+  if(!weekLogs.length){document.getElementById('week-z2').textContent='—';return;}
+  const z2 = weekLogs.filter(l=>l.zone==='Z1'||l.zone==='Z2').length;
+  document.getElementById('week-z2').textContent = Math.round(z2/weekLogs.length*100)+'%';
+}
+
+// =================== PLAN LIST ===================
+function renderPlan(){
+  document.getElementById('pl-rows').innerHTML = PLAN.map(p=>`
+    <div style="display:grid;grid-template-columns:60px 1fr 75px 65px 65px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;">
+      <span style="font-family:'DM Mono',monospace;color:var(--muted);">Sem ${p.w}</span>
+      <div><span class="badge ${p.b}">${p.ph}</span><span style="margin-left:5px;">${p.f}</span></div>
+      <span style="text-align:center;color:var(--swim);font-family:'DM Mono',monospace;">${p.sw}m</span>
+      <span style="text-align:center;color:var(--bike);font-family:'DM Mono',monospace;">${p.bk}'</span>
+      <span style="text-align:center;color:var(--run);font-family:'DM Mono',monospace;">${p.rn}'</span>
+    </div>`).join('');
+}
+
+// =================== WEEK VIEW ===================
+const DAYS_TPL=[
+  {s:'SEG',dow:1,hl:false},{s:'TER',dow:2,hl:false},{s:'QUA',dow:3,hl:false},
+  {s:'QUI',dow:4,hl:false},{s:'SEX★',dow:5,hl:true},{s:'SÁB',dow:6,hl:false},{s:'DOM',dow:0,hl:false}
+];
+
+let wi_view = 0;
+function renderWeekView(idx){
+  wi_view = idx;
+  const p = PLAN[idx];
+  document.getElementById('wt').textContent = `Semana ${p.w} — ${p.ph}: ${p.f}`;
+  const s=new Date(PS);s.setDate(s.getDate()+idx*7);
+  // Adjust to Monday
+  const mon = new Date(s); mon.setDate(s.getDate() - ((s.getDay()+6)%7));
+  const sun = new Date(mon); sun.setDate(mon.getDate()+6);
+  document.getElementById('ws').textContent =
+    mon.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' – '+sun.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('wn').innerHTML = `<strong>Foco:</strong> ${p.n}`;
+  const ts2 = p.sw>=5500;
+  const todayDow = new Date().getDay();
+
+  const html = DAYS_TPL.map(d=>{
+    const plan = DOW_getPlan(d.dow, ts2, p);
+    let pills = plan ? plan : [{c:'rs',t:'Descanso ativo',d:'caminhada'}];
+    if(d.dow===5) pills=[{c:'sw',t:'Natação Z2',d:`${ts2?Math.round(p.sw*.6):p.sw}m`}];
+    if(d.dow===6) pills=[{c:'bk',t:'Bike Z2',d:`${Math.round(p.bk*.55)}min`},{c:'rn',t:'Brick',d:`${Math.round(p.rn*.2)}min`}];
+    if(d.dow===0) pills=[{c:'rn',t:'Corrida longa',d:`${Math.round(p.rn*.4)}min Z2`}];
+    const isToday = d.dow===todayDow;
+    return `<div class="dc${d.hl?' hl':''}${isToday?' today':''}">
+      <div class="dh${d.hl?' hl':''}${isToday?' today':''}"><div class="dn${d.hl?' hl':''}${isToday?' today':''}">${d.s}${isToday?' ·':''}</div></div>
+      <div class="db">${pills.map(p=>`<div class="pi ${p.c}"><div class="pt">${p.t}</div><div class="pd">${p.d||''}</div></div>`).join('')}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('wk-wg').innerHTML = html;
+  document.getElementById('wv').textContent =
+    `Natação ${p.sw}m · Bike ${p.bk}min · Corrida ${p.rn}min · ${ts2?'Natação: qua + sex':'Natação: somente sex'}`;
+}
+function cw(d){ wi_view=Math.max(0,Math.min(PLAN.length-1,wi_view+d)); renderWeekView(wi_view); }
+
+// =================== GARMIN ANALYSIS ===================
+let pendingGarminData = {};
+
+function handleDrop(ev){
+  ev.preventDefault();
+  document.getElementById('garmin-zone').classList.remove('drag');
+  const files = Array.from(ev.dataTransfer.files).filter(f=>f.type.startsWith('image/'));
+  processGarminFiles(files);
+}
+function handleGarminFiles(ev){ processGarminFiles(Array.from(ev.target.files)); }
+
+function processGarminFiles(files){
+  if(!files.length) return;
+  garminImages = garminImages.concat(files);
+  renderPreviews();
+  analyzeWithClaude(files);
+}
+
+function renderPreviews(){
+  const el = document.getElementById('garmin-previews');
+  el.innerHTML = garminImages.map((f,i)=>`
+    <div class="garmin-thumb">
+      <img src="${URL.createObjectURL(f)}" alt="Garmin ${i+1}">
+      <button onclick="removeGarmin(${i})">×</button>
+    </div>`).join('');
+}
+function removeGarmin(i){ garminImages.splice(i,1); renderPreviews(); }
+
+async function analyzeWithClaude(files){
+  const apiKey = localStorage.getItem('anthropic_key');
+  if(!apiKey){
+    document.getElementById('apiModal').style.display='flex';
+    document.getElementById('api-key-input').dataset.pendingFiles = 'true';
+    return;
+  }
+  const analyzing = document.getElementById('garmin-analyzing');
+  const result = document.getElementById('garmin-result');
+  analyzing.classList.add('show');
+  result.classList.remove('show');
+
+  try {
+    const imageContents = await Promise.all(files.map(async f => {
+      const b64 = await fileToBase64(f);
+      return { type:'image', source:{ type:'base64', media_type:f.type, data:b64 }};
+    }));
+
+    const prompt = `Você é um assistente especializado em análise de dados de treino de triathlon.
+Analise esta(s) imagem(ns) do Garmin Connect e extraia os dados de treino.
+Responda APENAS com um JSON válido, sem markdown, sem texto extra:
+{
+  "sport": "run|bike|swim|gym",
+  "duration_min": número,
+  "distance": número,
+  "distance_unit": "km|m",
+  "hr_avg": número,
+  "hr_max": número,
+  "pace": "string ex: 6:45/km ou 28.5km/h",
+  "calories": número,
+  "zone": "Z1|Z2|Z3|Z4",
+  "zone_reasoning": "explicação curta de por que essa zona",
+  "notes": "observações sobre o treino baseadas nos dados"
+}
+Se um campo não estiver visível, use null. Para determinar a zona use: Z1<116, Z2=116-139, Z3=140-160, Z4=161-171 bpm (FC reserva, FC rep 54, FCmáx 178).`;
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+      body:JSON.stringify({
+        model:'claude-opus-4-5',
+        max_tokens:1000,
+        messages:[{ role:'user', content:[...imageContents,{type:'text',text:prompt}]}]
+      })
+    });
+
+    const data = await resp.json();
+    if(data.error) throw new Error(data.error.message);
+
+    const text = data.content[0].text.trim().replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(text);
+    pendingGarminData = parsed;
+    fillFormFromGarmin(parsed);
+    showGarminResult(parsed);
+  } catch(err) {
+    analyzing.classList.remove('show');
+    alert('Erro ao analisar: ' + err.message + '\n\nVerifique sua chave API em console.anthropic.com');
+  }
+}
+
+function fileToBase64(file){
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = e => res(e.target.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+function fillFormFromGarmin(d){
+  if(d.sport) document.getElementById('ls').value = d.sport;
+  if(d.duration_min) document.getElementById('ldu').value = Math.round(d.duration_min);
+  if(d.distance) document.getElementById('ldi').value = d.distance;
+  if(d.hr_avg) document.getElementById('lh').value = d.hr_avg;
+  if(d.hr_max) document.getElementById('lhmax').value = d.hr_max;
+  if(d.pace) document.getElementById('lpace').value = d.pace;
+  if(d.calories) document.getElementById('lcal').value = d.calories;
+  if(d.zone) document.getElementById('lz').value = d.zone;
+}
+
+function showGarminResult(d){
+  document.getElementById('garmin-analyzing').classList.remove('show');
+  const el = document.getElementById('garmin-result');
+  el.classList.add('show');
+
+  const sportNames={swim:'Natação',bike:'Bike',run:'Corrida',gym:'Academia'};
+  const items = [
+    d.sport ? {v:sportNames[d.sport]||d.sport, l:'Modalidade'} : null,
+    d.duration_min ? {v:Math.round(d.duration_min)+'min', l:'Duração'} : null,
+    d.distance ? {v:d.distance+(d.distance_unit||'km'), l:'Distância'} : null,
+    d.hr_avg ? {v:d.hr_avg+'bpm', l:'FC Média'} : null,
+    d.hr_max ? {v:d.hr_max+'bpm', l:'FC Máxima'} : null,
+    d.pace ? {v:d.pace, l:'Pace/Velocidade'} : null,
+    d.calories ? {v:d.calories+'kcal', l:'Calorias'} : null,
+    d.zone ? {v:d.zone, l:'Zona FC'} : null,
+  ].filter(Boolean);
+
+  document.getElementById('garmin-result-grid').innerHTML =
+    items.map(i=>`<div class="gr-item"><div class="gr-val">${i.v}</div><div class="gr-label">${i.l}</div></div>`).join('');
+
+  document.getElementById('garmin-notes-preview').innerHTML =
+    (d.zone_reasoning ? `<strong style="color:var(--accent);">Zona:</strong> ${d.zone_reasoning}<br>` : '') +
+    (d.notes ? `<strong style="color:var(--accent);">Análise:</strong> ${d.notes}` : '');
+}
+
+function saveApiKey(){
+  const k = document.getElementById('api-key-input').value.trim();
+  if(!k){alert('Insira uma chave válida.');return;}
+  localStorage.setItem('anthropic_key',k);
+  document.getElementById('apiModal').style.display='none';
+  if(garminImages.length) analyzeWithClaude(garminImages);
+}
 
 // =================== LOG ===================
-let logs=[];
-try{logs=JSON.parse(localStorage.getItem('im703v2')||'[]');}catch(e){}
 const SL={swim:'Natação',bike:'Bike',run:'Corrida',gym:'Academia/Pilates',brick:'Brick'};
 const SC={swim:'var(--swim)',bike:'var(--bike)',run:'var(--run)',gym:'var(--gym)',brick:'var(--accent)'};
 
@@ -511,125 +753,98 @@ function sl(){
     dist:parseFloat(document.getElementById('ldi').value)||0,
     dur:parseFloat(document.getElementById('ldu').value)||0,
     hr:parseFloat(document.getElementById('lh').value)||0,
+    hrmax:parseFloat(document.getElementById('lhmax').value)||0,
+    pace:document.getElementById('lpace').value||'',
+    cal:parseFloat(document.getElementById('lcal').value)||0,
     rpe:parseInt(document.getElementById('lr').value),
     notes:document.getElementById('ln').value,
     id:Date.now()
   };
   logs.unshift(e);
-  try{localStorage.setItem('im703v2',JSON.stringify(logs));}catch(e){}
-  rl(); ua();
-  ['ldi','ldu','lh','ln'].forEach(i=>document.getElementById(i).value='');
-  document.getElementById('lr').value=6;
-  document.getElementById('rv').textContent='6';
+  try{localStorage.setItem('im703v3',JSON.stringify(logs));}catch(err){}
+  renderLogs(); ua();
+  // Re-render today if date matches
+  if(e.date === new Date().toISOString().slice(0,10)){
+    const diff=Math.floor((new Date()-PS)/86400000/7);
+    const wi=Math.max(0,Math.min(PLAN.length-1,diff));
+    renderTodayWorkouts(new Date(),PLAN[wi]);
+    renderWeekZ2();
+    document.getElementById('ts').textContent=logs.length;
+  }
+  clearForm();
   const msg=document.getElementById('save-msg');
   msg.textContent='✓ Treino salvo!';
   setTimeout(()=>msg.textContent='',3000);
 }
 
-function rl(){
+function clearForm(){
+  ['ldi','ldu','lh','lhmax','lpace','lcal','ln'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
+  document.getElementById('lr').value=6; document.getElementById('rv').textContent='6';
+  garminImages=[];
+  document.getElementById('garmin-previews').innerHTML='';
+  document.getElementById('garmin-result').classList.remove('show');
+  document.getElementById('garmin-analyzing').classList.remove('show');
+  document.getElementById('garmin-input').value='';
+}
+
+function renderLogs(){
   document.getElementById('ts').textContent=logs.length;
   const el=document.getElementById('le');
-  if(!logs.length){
-    el.innerHTML='<div style="text-align:center;color:var(--muted);font-size:13px;padding:2rem;">Nenhum treino registrado ainda. Comece registrando seu próximo treino!</div>';
-    return;
-  }
+  if(!logs.length){el.innerHTML='<div style="text-align:center;color:var(--muted);font-size:13px;padding:2rem;">Nenhum treino registrado ainda.</div>';return;}
   el.innerHTML=logs.slice(0,30).map(l=>`
     <div class="le">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
         <span style="font-size:11px;font-family:'DM Mono',monospace;font-weight:700;color:${SC[l.sport]||'#aaa'}">${SL[l.sport]||l.sport} · ${l.zone}</span>
         <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">${l.date}</span>
       </div>
-      <div style="display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap;">
-        ${l.dist?`<span>dist <strong style="color:var(--text)">${l.dist}${l.sport==='swim'?'m':'km'}</strong></span>`:''}
-        ${l.dur?`<span>dur <strong style="color:var(--text)">${l.dur}min</strong></span>`:''}
-        ${l.hr?`<span>FC <strong style="color:var(--text)">${l.hr}bpm</strong></span>`:''}
+      <div style="display:flex;gap:12px;font-size:12px;color:var(--muted);flex-wrap:wrap;">
+        ${l.dist?`<span>📏 <strong style="color:var(--text)">${l.dist}${l.sport==='swim'?'m':'km'}</strong></span>`:''}
+        ${l.dur?`<span>⏱ <strong style="color:var(--text)">${l.dur}min</strong></span>`:''}
+        ${l.hr?`<span>💓 <strong style="color:var(--text)">${l.hr}bpm</strong></span>`:''}
+        ${l.hrmax?`<span>💓max <strong style="color:var(--text)">${l.hrmax}bpm</strong></span>`:''}
+        ${l.pace?`<span>🏃 <strong style="color:var(--text)">${l.pace}</strong></span>`:''}
         <span>RPE <strong style="color:var(--text)">${l.rpe}/10</strong></span>
       </div>
-      ${l.notes?`<div style="font-size:11px;color:var(--muted);margin-top:5px;font-style:italic;">"${l.notes}"</div>`:''}
-    </div>
-  `).join('');
+      ${l.notes?`<div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;">"${l.notes}"</div>`:''}
+    </div>`).join('');
 }
-rl();
 
-// =================== ANÁLISE ===================
+// =================== ANALYSIS ===================
 let vc2,zc2;
 function ua(){
   if(!logs.length)return;
   const r=logs.slice(0,28);
   const zn={Z1:0,Z2:0,Z3:0,Z4:0};
   const sp={swim:0,bike:0,run:0,gym:0,brick:0};
-  r.forEach(l=>{
-    zn[l.zone]=(zn[l.zone]||0)+1;
-    sp[l.sport]=(sp[l.sport]||0)+l.dur;
-  });
+  r.forEach(l=>{zn[l.zone]=(zn[l.zone]||0)+1;sp[l.sport]=(sp[l.sport]||0)+l.dur;});
   const tot=r.length;
   const z2p=Math.round(((zn.Z1||0)+(zn.Z2||0))/tot*100);
-  const z3p=Math.round((zn.Z3||0)/tot*100);
-  const z4p=Math.round((zn.Z4||0)/tot*100);
-
   document.getElementById('ac').innerHTML=`
-    <div class="ar"><span style="color:var(--muted);">Treinos Z1+Z2 (meta ≥ 80%)</span><span style="font-family:'DM Mono',monospace;font-weight:500;" class="${z2p>=80?'good':z2p>=65?'warn':'bad'}">${z2p}% ${z2p>=80?'✓':z2p>=65?'~':'↓'}</span></div>
-    <div class="ar"><span style="color:var(--muted);">Treinos Z3 threshold (meta ~15%)</span><span style="font-family:'DM Mono',monospace;font-weight:500;" class="${z3p>=10&&z3p<=20?'good':'warn'}">${z3p}%</span></div>
-    <div class="ar"><span style="color:var(--muted);">Treinos Z4+ (meta &lt; 5%)</span><span style="font-family:'DM Mono',monospace;font-weight:500;" class="${z4p<=5?'good':'bad'}">${z4p}%</span></div>
-    <div class="ar"><span style="color:var(--muted);">Sessões de natação registradas</span><span style="font-family:'DM Mono',monospace;font-weight:500;color:var(--swim);">${r.filter(l=>l.sport==='swim').length}</span></div>
-    <div class="ar"><span style="color:var(--muted);">Sessões de bike registradas</span><span style="font-family:'DM Mono',monospace;font-weight:500;color:var(--bike);">${r.filter(l=>l.sport==='bike').length}</span></div>
-    <div class="ar"><span style="color:var(--muted);">Sessões de corrida registradas</span><span style="font-family:'DM Mono',monospace;font-weight:500;color:var(--run);">${r.filter(l=>l.sport==='run').length}</span></div>
-    <div class="ar"><span style="color:var(--muted);">Minutos totais de treino</span><span style="font-family:'DM Mono',monospace;font-weight:500;">${r.reduce((a,l)=>a+l.dur,0)}min</span></div>
-  `;
-
-  if(vc2)vc2.destroy();
-  if(zc2)zc2.destroy();
-
-  vc2=new Chart(document.getElementById('vc'),{
-    type:'bar',
-    data:{
-      labels:['Natação','Bike','Corrida','Força'],
-      datasets:[{data:[sp.swim||0,sp.bike||0,sp.run||0,sp.gym||0],backgroundColor:['#378ADD','#f9a51a','#e63946','#a8dadc'],borderRadius:5}]
-    },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
-      x:{ticks:{color:'#7d8590',font:{size:11}},grid:{display:false}},
-      y:{ticks:{color:'#7d8590',font:{size:11}},grid:{color:'rgba(255,255,255,0.05)'}}
-    }}
-  });
-
-  zc2=new Chart(document.getElementById('zc'),{
-    type:'doughnut',
-    data:{
-      labels:['Z1','Z2','Z3','Z4'],
-      datasets:[{data:[zn.Z1||0,zn.Z2||0,zn.Z3||0,zn.Z4||0],backgroundColor:['#2d6a4f','#52b788','#f9c74f','#f8961e'],borderWidth:0,hoverOffset:4}]
-    },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{color:'#7d8590',font:{size:11},boxWidth:12}}}}
-  });
+    <div class="ar"><span style="color:var(--muted);">Z1+Z2 (meta ≥80%)</span><span class="${z2p>=80?'good':z2p>=65?'warn':'bad'}" style="font-family:'DM Mono',monospace;font-weight:500;">${z2p}% ${z2p>=80?'✓':z2p>=65?'~':'↓'}</span></div>
+    <div class="ar"><span style="color:var(--muted);">Z3 threshold (~15%)</span><span style="font-family:'DM Mono',monospace;font-weight:500;">${Math.round((zn.Z3||0)/tot*100)}%</span></div>
+    <div class="ar"><span style="color:var(--muted);">Z4+ (&lt;5%)</span><span style="font-family:'DM Mono',monospace;font-weight:500;" class="${Math.round((zn.Z4||0)/tot*100)<=5?'good':'bad'}">${Math.round((zn.Z4||0)/tot*100)}%</span></div>
+    <div class="ar"><span style="color:var(--muted);">Min. natação</span><span style="font-family:'DM Mono',monospace;font-weight:500;color:var(--swim);">${sp.swim}min</span></div>
+    <div class="ar"><span style="color:var(--muted);">Min. bike</span><span style="font-family:'DM Mono',monospace;font-weight:500;color:var(--bike);">${sp.bike}min</span></div>
+    <div class="ar"><span style="color:var(--muted);">Min. corrida</span><span style="font-family:'DM Mono',monospace;font-weight:500;color:var(--run);">${sp.run}min</span></div>
+    <div class="ar"><span style="color:var(--muted);">Total registrado</span><span style="font-family:'DM Mono',monospace;font-weight:500;">${r.reduce((a,l)=>a+l.dur,0)}min</span></div>`;
+  if(vc2)vc2.destroy();if(zc2)zc2.destroy();
+  vc2=new Chart(document.getElementById('vc'),{type:'bar',data:{labels:['Natação','Bike','Corrida','Força'],datasets:[{data:[sp.swim,sp.bike,sp.run,sp.gym],backgroundColor:['#378ADD','#f9a51a','#e63946','#a8dadc'],borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#7d8590',font:{size:11}},grid:{display:false}},y:{ticks:{color:'#7d8590',font:{size:11}},grid:{color:'rgba(255,255,255,0.05)'}}}}});
+  zc2=new Chart(document.getElementById('zc'),{type:'doughnut',data:{labels:['Z1','Z2','Z3','Z4'],datasets:[{data:[zn.Z1||0,zn.Z2||0,zn.Z3||0,zn.Z4||0],backgroundColor:['#2d6a4f','#52b788','#f9c74f','#f8961e'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{color:'#7d8590',font:{size:11},boxWidth:11}}}}});
 }
 
 // =================== BACKUP ===================
 function exportData(){
-  const data={logs,exportDate:new Date().toISOString(),version:'1.0'};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download=`ironman703_backup_${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  const blob=new Blob([JSON.stringify({logs,date:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`im703_backup_${new Date().toISOString().slice(0,10)}.json`;a.click();
 }
-function importData(){document.getElementById('import-file').click();}
 function loadImport(ev){
-  const f=ev.target.files[0];
-  if(!f)return;
   const r=new FileReader();
   r.onload=e=>{
-    try{
-      const d=JSON.parse(e.target.result);
-      if(d.logs){
-        logs=d.logs;
-        localStorage.setItem('im703v2',JSON.stringify(logs));
-        rl();
-        alert(`${logs.length} treinos importados com sucesso!`);
-      }
-    }catch(err){alert('Erro ao importar. Verifique o arquivo.');}
+    try{const d=JSON.parse(e.target.result);if(d.logs){logs=d.logs;localStorage.setItem('im703v3',JSON.stringify(logs));renderLogs();alert(logs.length+' treinos importados!');}}
+    catch{alert('Erro ao importar.');}
   };
-  r.readAsText(f);
+  r.readAsText(ev.target.files[0]);
 }
 
 // =================== TABS ===================
@@ -640,6 +855,8 @@ function st(id,btn){
   btn.classList.add('on');
   if(id==='an')ua();
 }
+
+init();
 </script>
 </body>
 </html>
