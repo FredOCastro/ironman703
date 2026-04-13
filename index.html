@@ -174,7 +174,7 @@ input[type=range]{accent-color:var(--accent);}
   <button class="tab" onclick="st('wk',this)">Semana</button>
   <button class="tab" onclick="st('lg',this)">Registrar</button>
   <button class="tab" onclick="st('an',this)">Análise</button>
-  <button class="tab" onclick="st('gh',this)">GitHub</button>
+  <button class="tab" onclick="st('gh',this)">Config</button>
 </div>
 
 <!-- ====== HOJE ====== -->
@@ -339,42 +339,80 @@ input[type=range]{accent-color:var(--accent);}
   </div>
 </div>
 
-<!-- ====== GITHUB ====== -->
+<!-- ====== CONFIG / GITHUB ====== -->
 <div id="tab-gh" class="sec">
-  <div class="tip"><strong>Link permanente gratuito:</strong> GitHub Pages gera um link tipo <span style="font-family:'DM Mono',monospace;color:var(--accent3);">seuusuario.github.io/ironman703</span></div>
+
+  <!-- API KEY CONFIG -->
+  <div class="card" style="border-color:rgba(0,212,168,.3);">
+    <div class="ct" style="color:var(--accent);">⚙️ Configuração da chave API Anthropic</div>
+    <div class="tip" style="margin-bottom:14px;">
+      <strong>Como obter sua chave:</strong> Acesse <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → <strong>API Keys</strong> → <strong>+ Create Key</strong> → copie a chave gerada (começa com <span style="font-family:'DM Mono',monospace;">sk-ant-</span>).
+    </div>
+
+    <label class="fl">Sua chave API atual</label>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <input type="password" class="fi" id="cfg-api-key" placeholder="sk-ant-api03-..." style="flex:1;">
+      <button class="bs" onclick="saveApiKeyFromConfig()" style="white-space:nowrap;">Salvar chave</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button class="bs sec-btn" onclick="toggleShowKey()">Mostrar / ocultar</button>
+      <button class="bs sec-btn" onclick="testApiKey()">Testar conexão</button>
+      <button class="bs sec-btn" style="border-color:rgba(230,57,70,.4);color:var(--run);" onclick="clearApiKey()">Remover chave</button>
+    </div>
+    <div style="font-size:12px;margin-top:10px;" id="api-status"></div>
+
+    <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
+      <div class="ct">Como editar diretamente no código-fonte HTML</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.8;">
+        1. Abra o arquivo <span style="font-family:'DM Mono',monospace;color:var(--text);">ironman703_v4.html</span> em qualquer editor de texto (Bloco de Notas, TextEdit, VS Code).<br>
+        2. Use <strong>Ctrl+F</strong> (ou Cmd+F no Mac) e busque por: <span style="font-family:'DM Mono',monospace;color:var(--accent3);">COLE_SUA_CHAVE_AQUI</span><br>
+        3. Substitua esse texto pela sua chave: <span style="font-family:'DM Mono',monospace;color:var(--accent3);">sk-ant-api03-...</span><br>
+        4. Salve o arquivo. A chave ficará embutida e não precisará mais ser configurada.
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-top:10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent3);line-height:1.8;">
+        // Linha a editar no código:<br>
+        const HARDCODED_KEY = '<span style="color:var(--z3);">COLE_SUA_CHAVE_AQUI</span>';
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKUP -->
+  <div class="card">
+    <div class="ct">Backup dos treinos</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+      <button class="bs" onclick="exportData()">Exportar JSON</button>
+      <button class="bs sec-btn" onclick="document.getElementById('import-file').click()">Importar JSON</button>
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="loadImport(event)">
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;">Exporte regularmente. Os dados ficam no localStorage do navegador — se limpar o cache, perde os dados sem backup.</div>
+  </div>
+
+  <!-- GITHUB PAGES -->
+  <div class="tip"><strong>Link permanente gratuito:</strong> GitHub Pages gera <span style="font-family:'DM Mono',monospace;color:var(--accent3);">seuusuario.github.io/ironman703</span></div>
   <div class="card">
     <div class="ct">Passo a passo — GitHub Pages</div>
     <div class="step"><div class="step-num">1</div><div><div class="step-title">Criar conta</div><div class="step-desc">Acesse <a href="https://github.com" target="_blank">github.com</a> e crie conta gratuita.</div></div></div>
     <div class="step"><div class="step-num">2</div><div><div class="step-title">Novo repositório</div><div class="step-desc">Clique em <strong>New repository</strong>, nomeie <span class="code">ironman703</span>, marque <strong>Public</strong> e crie.</div></div></div>
     <div class="step"><div class="step-num">3</div><div><div class="step-title">Upload do arquivo</div><div class="step-desc">Add file → Upload files → arraste este HTML. <strong>Renomeie para <span class="code">index.html</span></strong> → Commit changes.</div></div></div>
     <div class="step"><div class="step-num">4</div><div><div class="step-title">Ativar Pages</div><div class="step-desc">Settings → Pages → Source: <strong>Deploy from branch</strong> → Branch: <span class="code">main</span> / <span class="code">root</span> → Save.</div></div></div>
-    <div class="step"><div class="step-num">5</div><div><div class="step-title">Seu link</div><div class="step-desc">Após ~2 min: <span class="code">https://seuusuario.github.io/ironman703</span> — salve nos favoritos e adicione à tela inicial do iPhone (Safari → Compartilhar → Adicionar à Tela de Início).</div></div></div>
-  </div>
-  <div class="tip bl"><strong>Sobre os dados:</strong> Os treinos ficam salvos no localStorage do navegador do dispositivo que você usar. Exporte regularmente como backup.</div>
-  <div class="card">
-    <div class="ct">Backup dos dados</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
-      <button class="bs" onclick="exportData()">Exportar JSON</button>
-      <button class="bs sec-btn" onclick="document.getElementById('import-file').click()">Importar JSON</button>
-    </div>
-    <input type="file" id="import-file" accept=".json" style="display:none" onchange="loadImport(event)">
+    <div class="step"><div class="step-num">5</div><div><div class="step-title">Seu link</div><div class="step-desc">Após ~2 min: <span class="code">https://seuusuario.github.io/ironman703</span> — adicione à tela inicial do iPhone via Safari → Compartilhar → Adicionar à Tela de Início.</div></div></div>
   </div>
 </div>
 
 </div>
 
-<!-- ===== API KEY MODAL ===== -->
-<div id="apiModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;align-items:center;justify-content:center;">
+<!-- ===== API KEY MODAL (auto-prompt) ===== -->
+<div id="apiModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;align-items:center;justify-content:center;">
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.5rem;max-width:420px;width:90%;">
-    <div style="font-size:16px;font-weight:700;margin-bottom:6px;">Configurar chave da API</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Para analisar imagens do Garmin com IA, insira sua chave da API Anthropic. Ela fica salva apenas no seu navegador (localStorage) e nunca é enviada a terceiros.</div>
-    <label class="fl">Chave API Anthropic (sk-ant-...)</label>
+    <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Chave API não configurada</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Para analisar imagens do Garmin, configure sua chave na aba <strong style="color:var(--accent)">GitHub / Config</strong> — ou cole aqui agora.</div>
+    <label class="fl">Chave API Anthropic</label>
     <input type="password" class="fi" id="api-key-input" placeholder="sk-ant-api03-...">
     <div style="display:flex;gap:8px;margin-top:12px;">
-      <button class="bs" onclick="saveApiKey()">Salvar chave</button>
+      <button class="bs" onclick="saveApiKey()">Salvar e analisar</button>
       <button class="bs sec-btn" onclick="document.getElementById('apiModal').style.display='none'">Cancelar</button>
     </div>
-    <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Obtenha sua chave em <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. Cada análise de imagem consome créditos mínimos (~$0.003).</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6;">Obtenha em <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · ~$0.003 por análise.</div>
   </div>
 </div>
 
@@ -600,6 +638,84 @@ function renderWeekView(idx){
 }
 function cw(d){ wi_view=Math.max(0,Math.min(PLAN.length-1,wi_view+d)); renderWeekView(wi_view); }
 
+// =================== API KEY ===================
+// ➡️  EDITE AQUI para embutir sua chave diretamente no arquivo:
+const HARDCODED_KEY = 'COLE_SUA_CHAVE_AQUI';
+
+function getApiKey(){
+  // Prioridade: 1) hardcoded no código, 2) salvo no localStorage
+  if(HARDCODED_KEY && HARDCODED_KEY !== 'COLE_SUA_CHAVE_AQUI') return HARDCODED_KEY;
+  return localStorage.getItem('anthropic_key') || '';
+}
+
+function saveApiKeyFromConfig(){
+  const k = document.getElementById('cfg-api-key').value.trim();
+  if(!k){ setApiStatus('error','Cole a chave antes de salvar.'); return; }
+  if(!k.startsWith('sk-ant-')){ setApiStatus('warn','A chave deve começar com sk-ant-'); return; }
+  localStorage.setItem('anthropic_key', k);
+  setApiStatus('ok','✓ Chave salva no navegador com sucesso!');
+}
+
+function saveApiKey(){
+  const k = document.getElementById('api-key-input').value.trim();
+  if(!k) return;
+  localStorage.setItem('anthropic_key', k);
+  document.getElementById('apiModal').style.display='none';
+  if(garminImages.length) analyzeWithClaude(garminImages);
+}
+
+function clearApiKey(){
+  if(!confirm('Remover a chave salva?')) return;
+  localStorage.removeItem('anthropic_key');
+  document.getElementById('cfg-api-key').value = '';
+  setApiStatus('warn','Chave removida. Edite o código-fonte para usar a chave embutida.');
+}
+
+function toggleShowKey(){
+  const el = document.getElementById('cfg-api-key');
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+async function testApiKey(){
+  const key = getApiKey();
+  if(!key){ setApiStatus('error','Nenhuma chave configurada.'); return; }
+  setApiStatus('info','⟳ Testando conexão...');
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:10,messages:[{role:'user',content:'ok'}]})
+    });
+    const d = await r.json();
+    if(d.error) setApiStatus('error','Erro: '+d.error.message);
+    else setApiStatus('ok','✓ Conexão OK! Chave válida e funcionando.');
+  } catch(e){ setApiStatus('error','Falha de rede: '+e.message); }
+}
+
+function setApiStatus(type, msg){
+  const el = document.getElementById('api-status');
+  if(!el) return;
+  const colors = {ok:'var(--z2)',error:'var(--run)',warn:'var(--z3)',info:'var(--accent3)'};
+  el.style.color = colors[type]||'var(--muted)';
+  el.textContent = msg;
+}
+
+function initConfigTab(){
+  const saved = localStorage.getItem('anthropic_key');
+  const el = document.getElementById('cfg-api-key');
+  if(!el) return;
+  if(HARDCODED_KEY && HARDCODED_KEY !== 'COLE_SUA_CHAVE_AQUI'){
+    el.value = HARDCODED_KEY;
+    el.placeholder = 'Chave embutida no código-fonte';
+    setApiStatus('ok','✓ Chave embutida no código — pronta para uso.');
+  } else if(saved){
+    el.value = saved;
+    setApiStatus('ok','✓ Chave salva no navegador.');
+  } else {
+    setApiStatus('warn','Nenhuma chave configurada. Cole sua chave acima.');
+  }
+}
+
 // =================== GARMIN ANALYSIS ===================
 let pendingGarminData = {};
 
@@ -629,10 +745,9 @@ function renderPreviews(){
 function removeGarmin(i){ garminImages.splice(i,1); renderPreviews(); }
 
 async function analyzeWithClaude(files){
-  const apiKey = localStorage.getItem('anthropic_key');
+  const apiKey = getApiKey();
   if(!apiKey){
     document.getElementById('apiModal').style.display='flex';
-    document.getElementById('api-key-input').dataset.pendingFiles = 'true';
     return;
   }
   const analyzing = document.getElementById('garmin-analyzing');
@@ -668,7 +783,7 @@ Se um campo não estiver visível, use null. Para determinar a zona use: Z1<116,
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
       body:JSON.stringify({
-        model:'claude-opus-4-5',
+        model:'claude-sonnet-4-6',
         max_tokens:1000,
         messages:[{ role:'user', content:[...imageContents,{type:'text',text:prompt}]}]
       })
@@ -683,8 +798,12 @@ Se um campo não estiver visível, use null. Para determinar a zona use: Z1<116,
     fillFormFromGarmin(parsed);
     showGarminResult(parsed);
   } catch(err) {
-    analyzing.classList.remove('show');
-    alert('Erro ao analisar: ' + err.message + '\n\nVerifique sua chave API em console.anthropic.com');
+    document.getElementById('garmin-analyzing').classList.remove('show');
+    const msg = err.message.includes('401') ? 'Chave inválida ou sem permissão. Verifique em console.anthropic.com'
+              : err.message.includes('insufficient') ? 'Créditos insuficientes. Adicione créditos em console.anthropic.com → Billing'
+              : err.message.includes('Failed to fetch') ? 'Erro de rede. Se estiver no GitHub Pages, a API pode estar bloqueada pelo CORS — use o arquivo local.'
+              : err.message;
+    alert('Erro ao analisar: ' + msg);
   }
 }
 
@@ -792,10 +911,13 @@ function renderLogs(){
   const el=document.getElementById('le');
   if(!logs.length){el.innerHTML='<div style="text-align:center;color:var(--muted);font-size:13px;padding:2rem;">Nenhum treino registrado ainda.</div>';return;}
   el.innerHTML=logs.slice(0,30).map(l=>`
-    <div class="le">
-      <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+    <div class="le" id="log-${l.id}">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;align-items:center;">
         <span style="font-size:11px;font-family:'DM Mono',monospace;font-weight:700;color:${SC[l.sport]||'#aaa'}">${SL[l.sport]||l.sport} · ${l.zone}</span>
-        <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">${l.date}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">${l.date}</span>
+          <button onclick="deleteLog(${l.id})" title="Deletar treino" style="background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.3);color:var(--run);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">×</button>
+        </div>
       </div>
       <div style="display:flex;gap:12px;font-size:12px;color:var(--muted);flex-wrap:wrap;">
         ${l.dist?`<span>📏 <strong style="color:var(--text)">${l.dist}${l.sport==='swim'?'m':'km'}</strong></span>`:''}
@@ -807,6 +929,18 @@ function renderLogs(){
       </div>
       ${l.notes?`<div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;">"${l.notes}"</div>`:''}
     </div>`).join('');
+}
+
+function deleteLog(id){
+  if(!confirm('Deletar este treino?')) return;
+  logs = logs.filter(l => l.id !== id);
+  try{ localStorage.setItem('im703v3', JSON.stringify(logs)); }catch(e){}
+  renderLogs(); ua();
+  // refresh today view
+  const diff=Math.floor((new Date()-PS)/86400000/7);
+  const wi=Math.max(0,Math.min(PLAN.length-1,diff));
+  renderTodayWorkouts(new Date(),PLAN[wi]);
+  renderWeekZ2();
 }
 
 // =================== ANALYSIS ===================
@@ -853,7 +987,8 @@ function st(id,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.getElementById('tab-'+id).classList.add('on');
   btn.classList.add('on');
-  if(id==='an')ua();
+  if(id==='an') ua();
+  if(id==='gh') initConfigTab();
 }
 
 init();
