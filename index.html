@@ -59,7 +59,8 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-he
 .wg{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
 .dc{border-radius:9px;border:1px solid var(--border);background:var(--bg3);overflow:hidden;}
 .dc.hl{border-color:rgba(74,158,255,.45);}
-.dc.today{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,212,168,.2);}
+.dc.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,212,168,.2);}
+.dc.today{border-color:rgba(0,212,168,.5);}
 .dh{padding:6px 4px 5px;text-align:center;border-bottom:1px solid var(--border);}
 .dh.hl{background:rgba(74,158,255,.08);}
 .dh.today{background:rgba(0,212,168,.08);}
@@ -239,9 +240,34 @@ input[type=range]{accent-color:var(--accent);}
     </div>
     <button onclick="cw(1)">próxima →</button>
   </div>
-  <div class="tip" id="wn"></div>
-  <div class="wg" id="wk-wg"></div>
-  <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px;font-family:'DM Mono',monospace;" id="wv"></div>
+  <div class="tip" id="wn" style="margin-bottom:12px;"></div>
+
+  <!-- Clickable week grid -->
+  <div class="wg" id="wk-wg" style="margin-bottom:14px;cursor:pointer;"></div>
+
+  <!-- Day detail panel -->
+  <div id="wk-day-detail" style="display:none;">
+    <div class="card" style="border-color:rgba(0,212,168,.25);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div>
+          <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;" id="wk-detail-dayname"></div>
+          <div style="font-size:17px;font-weight:700;margin-top:2px;" id="wk-detail-title"></div>
+        </div>
+        <button onclick="document.getElementById('wk-day-detail').style.display='none';document.querySelectorAll('.dc').forEach(e=>e.classList.remove('selected'));" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:4px 12px;font-size:12px;cursor:pointer;">✕</button>
+      </div>
+
+      <!-- Workout blocks for selected day -->
+      <div id="wk-detail-workouts"></div>
+
+      <!-- Logs for that day -->
+      <div id="wk-detail-logs" style="margin-top:12px;"></div>
+
+      <!-- Register button -->
+      <div id="wk-detail-reg" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;font-family:'DM Mono',monospace;" id="wv"></div>
 </div>
 
 <!-- ====== REGISTRAR ====== -->
@@ -274,18 +300,21 @@ input[type=range]{accent-color:var(--accent);}
 
   <div class="card" style="margin-bottom:12px;">
     <div class="ct">Dados do treino</div>
-    <div class="fr">
+
+    <!-- Header: data + modalidade + zona -->
+    <div class="fr" style="margin-bottom:14px;">
       <div><label class="fl">Data</label><input type="date" class="fi" id="ld"></div>
       <div><label class="fl">Modalidade</label>
-        <select class="fi" id="ls">
-          <option value="swim">Natação</option>
-          <option value="bike">Bike</option>
-          <option value="run">Corrida</option>
-          <option value="gym">Academia / Pilates</option>
-          <option value="brick">Brick (bike+corrida)</option>
+        <select class="fi" id="ls" onchange="renderSportFields()">
+          <option value="run">🏃 Corrida</option>
+          <option value="bike">🚴 Bike</option>
+          <option value="swim">🏊 Natação</option>
+          <option value="gym">🏋️ Academia</option>
+          <option value="pilates">🧘 Pilates</option>
+          <option value="brick">⚡ Brick (bike+corrida)</option>
         </select>
       </div>
-      <div><label class="fl">Zona predominante</label>
+      <div><label class="fl">Zona FC</label>
         <select class="fi" id="lz">
           <option value="Z1">Z1 — Recuperação</option>
           <option value="Z2" selected>Z2 — Base aeróbica</option>
@@ -294,21 +323,19 @@ input[type=range]{accent-color:var(--accent);}
         </select>
       </div>
     </div>
-    <div class="fr">
-      <div><label class="fl">Distância (km ou m)</label><input type="number" class="fi" id="ldi" placeholder="ex: 1500"></div>
-      <div><label class="fl">Duração (min)</label><input type="number" class="fi" id="ldu" placeholder="ex: 60"></div>
-      <div><label class="fl">FC média (bpm)</label><input type="number" class="fi" id="lh" placeholder="ex: 132"></div>
+
+    <!-- Dynamic sport fields -->
+    <div id="sport-fields"></div>
+
+    <!-- RPE + notes (always visible) -->
+    <div id="rpe-notes-section">
+      <div style="margin-bottom:12px;">
+        <label class="fl">Percepção de esforço (RPE): <span id="rv" style="color:var(--text);font-weight:500;font-size:14px;">6</span> / 10</label>
+        <input type="range" min="1" max="10" value="6" step="1" id="lr" style="width:100%;margin-top:6px;" oninput="document.getElementById('rv').textContent=this.value">
+      </div>
+      <div style="margin-bottom:14px;"><label class="fl">Observações</label><input type="text" class="fi" id="ln" placeholder="sensação, condição climática, dores..."></div>
     </div>
-    <div class="fr">
-      <div><label class="fl">FC máxima (bpm)</label><input type="number" class="fi" id="lhmax" placeholder="ex: 155"></div>
-      <div><label class="fl">Pace médio</label><input type="text" class="fi" id="lpace" placeholder="ex: 6:30/km ou 28km/h"></div>
-      <div><label class="fl">Calorias</label><input type="number" class="fi" id="lcal" placeholder="ex: 650"></div>
-    </div>
-    <div style="margin-bottom:12px;">
-      <label class="fl">Percepção de esforço (RPE): <span id="rv" style="color:var(--text);font-weight:500;font-size:14px;">6</span> / 10</label>
-      <input type="range" min="1" max="10" value="6" step="1" id="lr" style="width:100%;margin-top:6px;" oninput="document.getElementById('rv').textContent=this.value">
-    </div>
-    <div style="margin-bottom:14px;"><label class="fl">Observações</label><input type="text" class="fi" id="ln" placeholder="sensação, condição climática, dores..."></div>
+
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
       <button class="bs" onclick="sl()">Salvar treino</button>
       <button class="bs sec-btn" onclick="clearForm()">Limpar</button>
@@ -470,17 +497,35 @@ const DAY_PLAN = {
   6: [{c:'bk',t:'Bike longa Z2',sport:'bike'},{c:'rn',t:'Brick corrida',sport:'run'}], // Sáb
 };
 
+// Descriptions keyed by day-of-week AND sport
 const DAY_DETAILS = {
-  0:{desc:'Corrida longa em Z2 puro. Ritmo conversacional do início ao fim — se não consegue falar, está rápido demais.',targets:['Z2 · 116–135 bpm','60–90min','6\'30"–7\'30"/km']},
-  1:{desc:'Corrida Z2 + Pilates. A corrida é o aquecimento da semana — leve, FC baixa. Pilates foca em mobilidade de quadril e força de core.',targets:['Z2 · 116–135 bpm','40–70min','Pilates 60min']},
-  2:{desc:'Bike com double threshold (núcleo do método norueguês). Aqueça 15min Z2, faça as séries Z3, esfrie 10min Z2. Academia: posteriores e glúteos.',targets:['3–4×8min Z3','140–158 bpm nas séries','Academia 30min']},
-  3:{desc:'Descanso ativo ou natação técnica (a partir da semana 11). Se nadar: drills, foco em técnica de bracada e rolamento — sem pressa.',targets:['Descanso ou natação técnica','FC baixa · Z1']},
-  4:{desc:'Corrida com double threshold (o segundo treino de qualidade da semana). Mesma estrutura da terça, mas correndo. Academia: posterior de coxa e core.',targets:['3–4×8min Z3','140–158 bpm nas séries','Academia 30min']},
-  5:{desc:'Natação Z2 — dia fixo de piscina. Aproveite para trabalhar técnica: entrada da mão, rotação do tronco, kick. Não force distância.',targets:['1.500–3.500m','Z2 · FC baixa na água','Foco técnico']},
-  6:{desc:'Maior bloco da semana. Bike longa em Z2 absoluto seguida de corrida imediata (brick) para treinar a transição T2 e as pernas pesadas.',targets:['Bike 90–180min Z2','Brick corrida 20–50min','Todo em Z2']},
+  0: {
+    run: { desc:'Corrida longa em Z2 puro. Ritmo conversacional do início ao fim — se não consegue falar frases inteiras, está rápido demais. É o treino de resistência aeróbica base da semana.', targets:['Z2 · 116–135 bpm','60–90min','6\'30"–7\'30"/km'] },
+  },
+  1: {
+    run: { desc:'Corrida leve Z2 — ativação da semana. FC baixa, pace confortável. Não tente compensar treinos perdidos aqui.', targets:['Z2 · 116–135 bpm','40–70min','6\'30"–7\'30"/km'] },
+    gym: { desc:'Pilates: mobilidade de quadril, estabilidade de core e equilíbrio. Exercícios funcionais que protegem joelhos e lombar durante os longas.', targets:['60min','Core e mobilidade','Sem sobrecarga'] },
+  },
+  2: {
+    bike: { desc:'Bike com double threshold — núcleo do método norueguês. Aquecimento em Z2, séries curtas em Z3, retorno ao Z2. Objetivo: elevar o limiar de lactato sem acumular fadiga excessiva.', targets:['3–4×8min Z3','140–158 bpm nas séries','Cadência 80–90rpm'] },
+    gym:  { desc:'Academia: força posterior — posteriores de coxa, glúteos e lombar. Exercícios curtos e controlados, foco em estabilidade para a corrida e bike.', targets:['30min','Posteriores e glúteos','3×12 moderado'] },
+  },
+  3: {
+    swim: { desc:'Natação técnica opcional (a partir da semana 11). Drills de bracada e rolamento do tronco — qualidade acima de quantidade. FC baixa o tempo todo.', targets:['1.500–2.500m','FC baixa · Z1','Foco técnico'] },
+    rest: { desc:'Descanso ativo. O corpo absorve as adaptações das sessões de terça. Caminhada leve, foam roller e alongamento são ideais.', targets:['Caminhada 20–30min','Foam roller','Mobilidade articular'] },
+  },
+  4: {
+    run: { desc:'Corrida com double threshold — segundo treino de qualidade da semana. Mesma lógica da terça na bike: aquecimento Z2, séries Z3, esfriamento Z2.', targets:['3–4×8min Z3','140–158 bpm nas séries','5\'40"–6\'10"/km nas séries'] },
+    gym: { desc:'Academia: posterior de coxa e core. Fortalece a musculatura que sustenta a postura nos quilômetros finais da corrida.', targets:['30min','Posterior e core','3×12 moderado'] },
+  },
+  5: {
+    swim: { desc:'Natação Z2 — dia fixo de piscina. Foco em técnica: entrada da mão na água, rotação do tronco, kick eficiente. Não force a distância, a FC deve ficar baixa.', targets:['1.500–3.500m','Z2 · FC baixa na água','Foco em técnica'] },
+  },
+  6: {
+    bike: { desc:'Bike longa em Z2 absoluto — maior sessão da semana. FC abaixo de 135 bpm o tempo todo. Se subir, reduza a marcha. Treine a nutrição: gel e água a cada 30–45min.', targets:['90–180min','Z2 · 116–135 bpm','Cadência 80–90rpm'] },
+    run:  { desc:'Corrida brick — imediatamente após descer da bike, sem pausa. As pernas ficam pesadas nos primeiros minutos (normal). Objetivo: adaptar o corpo à transição T2 da prova.', targets:['20–50min','Z2 · FC abaixo de 138','Ritmo conservador no início'] },
+  },
 };
-
-// =================== STATE ===================
 let logs = [];
 let garminImages = [];
 try{ logs = JSON.parse(localStorage.getItem('im703v3') || '[]'); }catch(e){}
@@ -507,26 +552,32 @@ function init(){
   renderLogs();
   renderPlan();
   renderWeekView(wi);
+  renderSportFields();
 }
 
 // =================== TODAY ===================
 function renderTodayWorkouts(today, planWeek){
-  const dow = today.getDay(); // 0=sun
+  const dow = today.getDay();
   const ts2 = planWeek.sw >= 5500;
   let dayPlan = DOW_getPlan(dow, ts2, planWeek);
   const dateStr = today.toISOString().slice(0,10);
   const todayLogs = logs.filter(l => l.date === dateStr);
-
   const el = document.getElementById('today-workouts');
+
   if(!dayPlan || !dayPlan.length){
-    el.innerHTML = `<div class="rest-day-msg">🧘 Dia de descanso ativo — caminhada leve, mobilidade, foam roller.</div>`;
+    let html = `<div class="rest-day-msg">🧘 Dia de descanso ativo — caminhada leve, mobilidade, foam roller.</div>`;
+    if(todayLogs.length) html += renderExtraLogs(todayLogs, []);
+    el.innerHTML = html;
     return;
   }
 
-  el.innerHTML = dayPlan.map((w,i) => {
-    const done = todayLogs.find(l => l.sport === w.sport);
-    const det = DAY_DETAILS[dow];
-    const tgt = det && det.targets ? det.targets : [];
+  const plannedSports = dayPlan.map(w => w.sport);
+  let html = dayPlan.map(w => {
+    const sportLogs = todayLogs.filter(l => l.sport === w.sport);
+    const done = sportLogs.length > 0;
+    const dayDets = DAY_DETAILS[dow] || {};
+    const det = dayDets[w.sport] || dayDets['rest'] || {desc:'', targets:[]};
+    const tgt = det.targets || [];
     return `
     <div class="workout-block ${done?'done-block':''}">
       <div class="wb-header">
@@ -534,27 +585,69 @@ function renderTodayWorkouts(today, planWeek){
           <div class="sport-dot" style="background:${sportColor(w.sport)};"></div>
           <span class="wb-title">${w.t}</span>
         </div>
-        ${done ? `<span class="wb-done-badge">✓ FEITO</span>` : `<button class="reg-btn-today" onclick="goRegister('${w.sport}')">+ Registrar</button>`}
-      </div>
-      <div class="wb-desc">${det ? det.desc : ''}</div>
-      <div class="wb-target">
-        ${tgt.map(t=>`<div class="wb-target-item">${t}</div>`).join('')}
-      </div>
-      ${done ? `
-      <div class="wb-log-data">
-        <div class="wb-log-row">
-          ${done.dur?`<span>⏱ <strong>${done.dur}min</strong></span>`:''}
-          ${done.dist?`<span>📏 <strong>${done.dist}${done.sport==='swim'?'m':'km'}</strong></span>`:''}
-          ${done.hr?`<span>💓 <strong>${done.hr}bpm</strong> média</span>`:''}
-          ${done.hrmax?`<span>💓 <strong>${done.hrmax}bpm</strong> máx</span>`:''}
-          ${done.pace?`<span>🏃 <strong>${done.pace}</strong></span>`:''}
-          <span>RPE <strong>${done.rpe}/10</strong></span>
-          <span class="badge ${done.zone.toLowerCase()}" style="font-size:10px;">${done.zone}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${done ? `<span class="wb-done-badge">✓ ${sportLogs.length>1?sportLogs.length+'× ':''}FEITO</span>` : ''}
+          <button class="reg-btn-today" onclick="goRegister('${w.sport}')">+ Registrar</button>
         </div>
-        ${done.notes?`<div style="font-size:11px;color:var(--muted);margin-top:6px;font-style:italic;">"${done.notes}"</div>`:''}
-      </div>` : ''}
+      </div>
+      <div class="wb-desc">${det.desc}</div>
+      <div class="wb-target">${tgt.map(t=>`<div class="wb-target-item">${t}</div>`).join('')}</div>
+      ${sportLogs.map((entry, idx) => `
+      <div class="wb-log-data" style="${idx>0?'margin-top:8px;padding-top:8px;border-top:1px solid rgba(82,183,136,.15);':''}">
+        ${sportLogs.length>1?`<div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--z2);margin-bottom:4px;">Registro ${idx+1}</div>`:''}
+        <div class="wb-log-row">${metaRowToday(entry)}</div>
+        ${entry.notes?`<div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;">"${entry.notes}"</div>`:''}
+        <button onclick="deleteLog(${entry.id})" style="margin-top:6px;background:rgba(230,57,70,.08);border:1px solid rgba(230,57,70,.25);color:var(--run);border-radius:6px;padding:2px 10px;font-size:11px;cursor:pointer;font-family:'Syne',sans-serif;">× Remover</button>
+      </div>`).join('')}
     </div>`;
   }).join('');
+
+  html += renderExtraLogs(todayLogs, plannedSports);
+  el.innerHTML = html;
+}
+
+function metaRowToday(l){
+  const it=[];
+  if(l.dur)    it.push(`⏱ <strong>${l.dur}min</strong>`);
+  if(l.dist && l.sport==='swim') it.push(`📏 <strong>${l.dist}m</strong>`);
+  else if(l.dist) it.push(`📏 <strong>${l.dist}km</strong>`);
+  if(l.pace && l.sport==='swim') it.push(`🌊 <strong>${l.pace}/100m</strong>`);
+  else if(l.pace) it.push(`🏃 <strong>${l.pace}/km</strong>`);
+  if(l.spd)   it.push(`⚡ <strong>${l.spd}km/h</strong>`);
+  if(l.hr)    it.push(`💓 <strong>${l.hr}bpm</strong>`);
+  if(l.hrmax) it.push(`💓max <strong>${l.hrmax}bpm</strong>`);
+  if(l.pow)   it.push(`⚡ <strong>${l.pow}W</strong>`);
+  if(l.cal)   it.push(`🔥 <strong>${l.cal}kcal</strong>`);
+  if(l.zone && l.zone!=='—') it.push(`<span class="badge ${l.zone.toLowerCase()}" style="font-size:9px;">${l.zone}</span>`);
+  it.push(`RPE <strong>${l.rpe}/10</strong>`);
+  return it.map(i=>`<span style="font-size:12px;color:var(--muted);">${i}</span>`).join('');
+}
+
+function renderExtraLogs(todayLogs, plannedSports){
+  const extras = todayLogs.filter(l => !plannedSports.includes(l.sport));
+  if(!extras.length) return '';
+  return `
+  <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px;">
+    <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Treinos extras hoje</div>
+    ${extras.map(entry => `
+    <div class="workout-block done-block" style="margin-bottom:8px;">
+      <div class="wb-header">
+        <div class="wb-sport">
+          <div class="sport-dot" style="background:${SC[entry.sport]||'#888'};"></div>
+          <span class="wb-title">${SPORT_ICON[entry.sport]||''} ${SL[entry.sport]||entry.sport}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="wb-done-badge">✓ FEITO</span>
+          <button class="reg-btn-today" onclick="goRegister('${entry.sport}')">+ Registrar</button>
+        </div>
+      </div>
+      <div class="wb-log-data">
+        <div class="wb-log-row">${metaRowToday(entry)}</div>
+        ${entry.notes?`<div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;">"${entry.notes}"</div>`:''}
+        <button onclick="deleteLog(${entry.id})" style="margin-top:6px;background:rgba(230,57,70,.08);border:1px solid rgba(230,57,70,.25);color:var(--run);border-radius:6px;padding:2px 10px;font-size:11px;cursor:pointer;font-family:'Syne',sans-serif;">× Remover</button>
+      </div>
+    </div>`).join('')}
+  </div>`;
 }
 
 function DOW_getPlan(dow, ts2, pw){
@@ -606,36 +699,198 @@ const DAYS_TPL=[
 ];
 
 let wi_view = 0;
+let selectedDow = null;
+
 function renderWeekView(idx){
   wi_view = idx;
+  selectedDow = null;
+  document.getElementById('wk-day-detail').style.display = 'none';
   const p = PLAN[idx];
   document.getElementById('wt').textContent = `Semana ${p.w} — ${p.ph}: ${p.f}`;
-  const s=new Date(PS);s.setDate(s.getDate()+idx*7);
-  // Adjust to Monday
+  const s = new Date(PS); s.setDate(s.getDate()+idx*7);
   const mon = new Date(s); mon.setDate(s.getDate() - ((s.getDay()+6)%7));
   const sun = new Date(mon); sun.setDate(mon.getDate()+6);
   document.getElementById('ws').textContent =
-    mon.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' – '+sun.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
-  document.getElementById('wn').innerHTML = `<strong>Foco:</strong> ${p.n}`;
-  const ts2 = p.sw>=5500;
+    mon.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})+' – '+
+    sun.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('wn').innerHTML = `<strong>Foco da semana:</strong> ${p.n}`;
+  const ts2 = p.sw >= 5500;
   const todayDow = new Date().getDay();
 
-  const html = DAYS_TPL.map(d=>{
+  const html = DAYS_TPL.map((d, i) => {
+    const offset = d.dow === 0 ? 6 : d.dow - 1;
+    const dayDate = new Date(mon); dayDate.setDate(mon.getDate() + offset);
+    const dateStr = dayDate.toISOString().slice(0,10);
     const plan = DOW_getPlan(d.dow, ts2, p);
-    let pills = plan ? plan : [{c:'rs',t:'Descanso ativo',d:'caminhada'}];
+    let pills = plan ? plan : [{c:'rs',t:'Descanso ativo',d:'toque para ver'}];
     if(d.dow===5) pills=[{c:'sw',t:'Natação Z2',d:`${ts2?Math.round(p.sw*.6):p.sw}m`}];
     if(d.dow===6) pills=[{c:'bk',t:'Bike Z2',d:`${Math.round(p.bk*.55)}min`},{c:'rn',t:'Brick',d:`${Math.round(p.rn*.2)}min`}];
     if(d.dow===0) pills=[{c:'rn',t:'Corrida longa',d:`${Math.round(p.rn*.4)}min Z2`}];
-    const isToday = d.dow===todayDow;
-    return `<div class="dc${d.hl?' hl':''}${isToday?' today':''}">
-      <div class="dh${d.hl?' hl':''}${isToday?' today':''}"><div class="dn${d.hl?' hl':''}${isToday?' today':''}">${d.s}${isToday?' ·':''}</div></div>
-      <div class="db">${pills.map(p=>`<div class="pi ${p.c}"><div class="pt">${p.t}</div><div class="pd">${p.d||''}</div></div>`).join('')}</div>
+    const isToday = d.dow === todayDow;
+    const hasLog = logs.some(l => l.date === dateStr);
+    return `<div class="dc${d.hl?' hl':''}${isToday?' today':''}" onclick="selectWeekDay(${d.dow},${i},'${dateStr}')" style="cursor:pointer;" title="Ver detalhes">
+      <div class="dh${d.hl?' hl':''}${isToday?' today':''}">
+        <div class="dn${d.hl?' hl':''}${isToday?' today':''}">${d.s}</div>
+        ${hasLog?`<div style="width:5px;height:5px;border-radius:50%;background:var(--z2);margin:2px auto 0;"></div>`:''}
+      </div>
+      <div class="db">${pills.map(pill=>`<div class="pi ${pill.c}"><div class="pt">${pill.t}</div><div class="pd">${pill.d||''}</div></div>`).join('')}</div>
     </div>`;
   }).join('');
+
   document.getElementById('wk-wg').innerHTML = html;
   document.getElementById('wv').textContent =
     `Natação ${p.sw}m · Bike ${p.bk}min · Corrida ${p.rn}min · ${ts2?'Natação: qua + sex':'Natação: somente sex'}`;
 }
+
+function selectWeekDay(dow, colIdx, dateStr){
+  if(selectedDow === dow){
+    selectedDow = null;
+    document.getElementById('wk-day-detail').style.display = 'none';
+    document.querySelectorAll('#wk-wg .dc').forEach(e=>e.classList.remove('selected'));
+    return;
+  }
+  selectedDow = dow;
+  document.querySelectorAll('#wk-wg .dc').forEach((el,i)=>el.classList.toggle('selected', i===colIdx));
+
+  const p = PLAN[wi_view];
+  const ts2 = p.sw >= 5500;
+  const plan = DOW_getPlan(dow, ts2, p);
+  const dayNames = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  const dateObj = new Date(dateStr+'T12:00:00');
+  const dateLabel = dateObj.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const todayStr = new Date().toISOString().slice(0,10);
+  const isToday = dateStr === todayStr;
+  const isPast  = dateStr < todayStr;
+
+  document.getElementById('wk-detail-dayname').textContent = `${dayNames[dow]} · ${dateLabel}${isToday?' · HOJE':''}`;
+
+  let titleText = 'Descanso ativo';
+  if(dow===3 && ts2) titleText = 'Natação Z2 (opcional)';
+  else if(dow===3)   titleText = 'Descanso ativo / Recuperação';
+  else if(plan)      titleText = plan.map(w=>w.t).join(' + ');
+  document.getElementById('wk-detail-title').textContent = titleText;
+
+  // Build workout detail cards
+  let workoutsHtml = '';
+  if(!plan && !(dow===3 && ts2)){
+    workoutsHtml = `<div style="background:var(--bg3);border-radius:10px;padding:12px 14px;">
+      <div style="font-size:13px;color:var(--muted);line-height:1.7;">🧘 Dia de descanso ativo. Caminhada leve (20–30min), foam roller, mobilidade articular, alongamento.<br>
+      <span style="color:var(--z2);font-weight:500;">Não pule o descanso</span> — é quando o corpo absorve as adaptações.</div></div>`;
+  } else {
+    let workoutList = plan || [];
+    if(dow===3 && ts2) workoutList = [{c:'sw',t:'Natação Z2',sport:'swim'}];
+    workoutsHtml = workoutList.map(w => {
+      const wDet = getWorkoutDetail(w.sport, dow, p, ts2);
+      return `<div style="background:var(--bg3);border-radius:10px;padding:12px 14px;margin-bottom:8px;border-left:3px solid ${sportColor(w.sport)};">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div style="width:9px;height:9px;border-radius:50%;background:${sportColor(w.sport)};flex-shrink:0;"></div>
+          <span style="font-size:14px;font-weight:600;">${w.t}</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px;">${wDet.desc}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:${wDet.structure?'10px':'0'};">
+          ${wDet.targets.map(t=>`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-family:'DM Mono',monospace;">${t}</div>`).join('')}
+        </div>
+        ${wDet.structure?`<div style="border-top:1px solid var(--border);padding-top:10px;">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-family:'DM Mono',monospace;">Estrutura da sessão</div>
+          ${wDet.structure.map(s=>`<div style="display:flex;gap:10px;align-items:baseline;font-size:12px;margin-bottom:5px;"><span style="color:var(--accent3);width:80px;font-family:'DM Mono',monospace;font-size:11px;flex-shrink:0;">${s.t}</span><span style="color:var(--muted);">${s.d}</span></div>`).join('')}
+        </div>`:''}
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('wk-detail-workouts').innerHTML = workoutsHtml;
+
+  // Logs for this date
+  const dayLogs = logs.filter(l => l.date === dateStr);
+  let logsHtml = '';
+  if(dayLogs.length){
+    logsHtml = `<div style="border-top:1px solid var(--border);padding-top:12px;">
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Registros do dia</div>
+      ${dayLogs.map(l=>`<div class="le" style="margin-bottom:7px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+          <span style="font-size:11px;font-family:'DM Mono',monospace;font-weight:700;color:${SC[l.sport]||'#aaa'}">${SPORT_ICON[l.sport]||''} ${SL[l.sport]||l.sport}${l.zone&&l.zone!=='—'?' · '+l.zone:''}</span>
+          <button onclick="deleteLog(${l.id});selectWeekDay(${dow},${colIdx},'${dateStr}')" style="background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.3);color:var(--run);border-radius:6px;width:22px;height:22px;cursor:pointer;font-size:13px;line-height:1;">×</button>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;line-height:1.8;">${metaRowToday(l)}</div>
+        ${l.notes?`<div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;">"${l.notes}"</div>`:''}
+      </div>`).join('')}
+    </div>`;
+  } else if(isPast){
+    logsHtml = `<div style="border-top:1px solid var(--border);padding-top:12px;font-size:12px;color:var(--muted);">Nenhum treino registrado neste dia.</div>`;
+  }
+  document.getElementById('wk-detail-logs').innerHTML = logsHtml;
+
+  // Register shortcut
+  const sportDefault = plan ? plan[0].sport : 'run';
+  document.getElementById('wk-detail-reg').innerHTML = `<div style="border-top:1px solid var(--border);padding-top:12px;">
+    <button class="reg-btn-today" onclick="goRegisterDate('${dateStr}','${sportDefault}')">+ Registrar treino neste dia</button>
+  </div>`;
+
+  document.getElementById('wk-day-detail').style.display = 'block';
+  setTimeout(()=>document.getElementById('wk-day-detail').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+
+function getWorkoutDetail(sport, dow, p, ts2){
+  const dayDets = DAY_DETAILS[dow] || {};
+  const base = dayDets[sport] || dayDets['rest'] || {desc:'', targets:[]};
+
+  if(sport==='run'){
+    const dur = dow===0?Math.round(p.rn*.4):dow===4?Math.round(p.rn*.3):Math.round(p.rn*.35);
+    return {
+      desc: base.desc,
+      targets: [`Z2 · 116–135 bpm`,`${dur}min`,dow===4?`3–4×8min Z3 · 140–158bpm`:`6'30"–7'30"/km`],
+      structure: dow===4
+        ? [{t:'Aquecimento',d:'15min corrida leve Z1'},{t:'Threshold',d:'3–4×8min Z3 (140–158bpm) com 3min trote Z1 entre séries'},{t:'Esfriamento',d:'10min Z1 bem leve'}]
+        : dow===0
+        ? [{t:'Início',d:'10min Z1 para aquecer'},{t:'Principal',d:`${dur-10}min Z2 puro — pace conversacional`}]
+        : null
+    };
+  }
+  if(sport==='bike'){
+    const dur = dow===6?Math.round(p.bk*.55):Math.round(p.bk*.45);
+    return {
+      desc: base.desc,
+      targets: [`${dur}min`,dow===2?'3–4×8min Z3':'Z2 · 116–135 bpm','Cadência 80–90rpm'],
+      structure: dow===2
+        ? [{t:'Aquecimento',d:'15min spin leve Z1'},{t:'Threshold',d:'3–4×8min Z3 (140–158bpm) com 5min Z1 entre séries'},{t:'Esfriamento',d:'10min Z1'}]
+        : [{t:'Início',d:'10min aquecimento Z1'},{t:'Principal',d:`${dur-10}min Z2 constante`},{t:'Brick',d:`Transição imediata: ${Math.round(p.rn*.2)}min corrida Z2`}]
+    };
+  }
+  if(sport==='swim'){
+    const dist = ts2?Math.round(p.sw*.6):p.sw;
+    return {
+      desc: base.desc,
+      targets: [`${dist}m`,"Pace: 2'00\"-2'20\"/100m","FC baixa · Z1-Z2"],
+      structure: [
+        {t:'Aquecimento',d:'200m livre leve'},
+        {t:'Tecnica',d:'4x50m foco em rolamento do tronco e entrada da mao'},
+        {t:'Principal',d:`${Math.max(dist-400,400)}m continuo ou series de 400m`},
+        {t:'Esfriamento',d:'200m costas ou livre bem suave'}
+      ]
+    };
+  }
+  if(sport==='gym'){
+    const isPilates = dow===1;
+    return {
+      desc: base.desc,
+      targets: base.targets,
+      structure: isPilates
+        ? [{t:'Core',d:'Prancha, dead bug, bird dog - 3 series'},{t:'Mobilidade',d:'Quadril, toracica, hip flexor stretch'},{t:'Equilibrio',d:'Exercicios unilaterais'}]
+        : [{t:'Aquecimento',d:'5min bike ergometrica leve'},{t:'Forca',d:'Leg press, flexora, extensora - 3x12 moderado'},{t:'Core',d:'Prancha lateral, Romanian deadlift leve'}]
+    };
+  }
+  return {desc: base.desc, targets: base.targets, structure: null};
+}
+
+function goRegisterDate(dateStr, sport){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tab-lg').classList.add('on');
+  document.querySelector('.tab[onclick*="lg"]').classList.add('on');
+  document.getElementById('ld').value = dateStr;
+  document.getElementById('ls').value = sport;
+  renderSportFields();
+}
+
 function cw(d){ wi_view=Math.max(0,Math.min(PLAN.length-1,wi_view+d)); renderWeekView(wi_view); }
 
 // =================== API KEY ===================
@@ -817,14 +1072,14 @@ function fileToBase64(file){
 }
 
 function fillFormFromGarmin(d){
-  if(d.sport) document.getElementById('ls').value = d.sport;
-  if(d.duration_min) document.getElementById('ldu').value = Math.round(d.duration_min);
-  if(d.distance) document.getElementById('ldi').value = d.distance;
-  if(d.hr_avg) document.getElementById('lh').value = d.hr_avg;
-  if(d.hr_max) document.getElementById('lhmax').value = d.hr_max;
-  if(d.pace) document.getElementById('lpace').value = d.pace;
-  if(d.calories) document.getElementById('lcal').value = d.calories;
-  if(d.zone) document.getElementById('lz').value = d.zone;
+  if(d.sport){ document.getElementById('ls').value=d.sport; renderSportFields(); }
+  if(d.duration_min){ const el=document.getElementById('ldu'); if(el) el.value=Math.round(d.duration_min); }
+  if(d.distance){ const el=document.getElementById('ldi'); if(el) el.value=d.distance; }
+  if(d.hr_avg){ const el=document.getElementById('lh'); if(el) el.value=d.hr_avg; }
+  if(d.hr_max){ const el=document.getElementById('lhmax'); if(el) el.value=d.hr_max; }
+  if(d.pace){ const el=document.getElementById('lpace'); if(el) el.value=d.pace; }
+  if(d.calories){ const el=document.getElementById('lcal'); if(el) el.value=d.calories; }
+  if(d.zone) document.getElementById('lz').value=d.zone;
 }
 
 function showGarminResult(d){
@@ -860,50 +1115,112 @@ function saveApiKey(){
   if(garminImages.length) analyzeWithClaude(garminImages);
 }
 
+// =================== SPORT FIELDS ===================
+const SPORT_FIELDS = {
+  run: { rows:[
+    [{id:'ldu',l:'Duração (min)',t:'number',ph:'ex: 55'},{id:'ldi',l:'Distância (km)',t:'number',ph:'ex: 7.5'},{id:'lpace',l:'Pace médio (min/km)',t:'text',ph:'ex: 6:45'}],
+    [{id:'lh',l:'FC média (bpm)',t:'number',ph:'ex: 132'},{id:'lhmax',l:'FC máxima (bpm)',t:'number',ph:'ex: 155'},{id:'lcad',l:'Cadência (ppm)',t:'number',ph:'ex: 172'}],
+    [{id:'lvo2',l:'VO2max estimado',t:'number',ph:'ex: 47'},{id:'lcal',l:'Calorias (kcal)',t:'number',ph:'ex: 520'},{id:'lele',l:'Elevação (m)',t:'number',ph:'ex: 85'}],
+  ]},
+  bike: { rows:[
+    [{id:'ldu',l:'Duração (min)',t:'number',ph:'ex: 90'},{id:'ldi',l:'Distância (km)',t:'number',ph:'ex: 42'},{id:'lspd',l:'Vel. média (km/h)',t:'number',ph:'ex: 28.5'}],
+    [{id:'lh',l:'FC média (bpm)',t:'number',ph:'ex: 130'},{id:'lhmax',l:'FC máxima (bpm)',t:'number',ph:'ex: 152'},{id:'lpow',l:'Potência média (W)',t:'number',ph:'ex: 185'}],
+    [{id:'lcad',l:'Cadência (rpm)',t:'number',ph:'ex: 85'},{id:'lcal',l:'Calorias (kcal)',t:'number',ph:'ex: 780'},{id:'lele',l:'Elevação (m)',t:'number',ph:'ex: 320'}],
+  ]},
+  swim: { rows:[
+    [{id:'ldu',l:'Duração (min)',t:'number',ph:'ex: 45'},{id:'ldi',l:'Distância (m)',t:'number',ph:'ex: 2000'},{id:'lpace',l:'Pace (/100m)',t:'text',ph:'ex: 2:05'}],
+    [{id:'lswol',l:'SWOLF médio',t:'number',ph:'ex: 38'},{id:'lstk',l:'Braçadas/largada',t:'number',ph:'ex: 18'},{id:'lsrate',l:'Freq. braçadas/min',t:'number',ph:'ex: 28'}],
+    [{id:'lh',l:'FC média (bpm)',t:'number',ph:'ex: 128'},{id:'llaps',l:'Largadas (nº)',t:'number',ph:'ex: 40'},{id:'lcal',l:'Calorias (kcal)',t:'number',ph:'ex: 380'}],
+  ]},
+  gym: { rows:[ [{id:'ldu',l:'Duração (min)',t:'number',ph:'ex: 50'},{id:'lcal',l:'Calorias (kcal)',t:'number',ph:'ex: 220'}] ]},
+  pilates: { rows:[ [{id:'ldu',l:'Duração (min)',t:'number',ph:'ex: 60'},{id:'lcal',l:'Calorias (kcal)',t:'number',ph:'ex: 180'}] ]},
+  brick: { rows:[
+    [{id:'ldu',l:'Duração total (min)',t:'number',ph:'ex: 105'},{id:'ldi',l:'Dist. bike (km)',t:'number',ph:'ex: 35'},{id:'ldi2',l:'Dist. corrida (km)',t:'number',ph:'ex: 5'}],
+    [{id:'lspd',l:'Vel. bike (km/h)',t:'number',ph:'ex: 27'},{id:'lpace',l:'Pace corrida (min/km)',t:'text',ph:'ex: 6:30'},{id:'lh',l:'FC média (bpm)',t:'number',ph:'ex: 138'}],
+    [{id:'lhmax',l:'FC máxima (bpm)',t:'number',ph:'ex: 160'},{id:'lcal',l:'Calorias (kcal)',t:'number',ph:'ex: 900'},{id:'lele',l:'Elevação (m)',t:'number',ph:'ex: 200'}],
+  ]},
+};
+const ALL_FIELDS=['ldu','ldi','ldi2','lh','lhmax','lpace','lcal','lcad','lspd','lpow','lele','lvo2','lswol','lstk','lsrate','llaps'];
+
+function renderSportFields(){
+  const sport=document.getElementById('ls').value;
+  const cfg=SPORT_FIELDS[sport];
+  const noZone=sport==='gym'||sport==='pilates';
+  document.getElementById('lz').closest('div').style.display=noZone?'none':'';
+  if(!cfg){document.getElementById('sport-fields').innerHTML='';return;}
+  document.getElementById('sport-fields').innerHTML=cfg.rows.map(row=>`
+    <div class="fr" style="margin-bottom:10px;">
+      ${row.map(f=>`<div><label class="fl">${f.l}</label><input type="${f.t}" class="fi" id="${f.id}" placeholder="${f.ph}"></div>`).join('')}
+      ${row.length===2?'<div></div>':''}
+    </div>`).join('');
+}
+
+function fv(id){const el=document.getElementById(id);return el?(el.type==='number'?(parseFloat(el.value)||0):(el.value||'')):'';}
+
 // =================== LOG ===================
-const SL={swim:'Natação',bike:'Bike',run:'Corrida',gym:'Academia/Pilates',brick:'Brick'};
-const SC={swim:'var(--swim)',bike:'var(--bike)',run:'var(--run)',gym:'var(--gym)',brick:'var(--accent)'};
+const SL={swim:'Natação',bike:'Bike',run:'Corrida',gym:'Academia',pilates:'Pilates',brick:'Brick'};
+const SC={swim:'var(--swim)',bike:'var(--bike)',run:'var(--run)',gym:'var(--gym)',pilates:'var(--gym)',brick:'var(--accent)'};
+const SPORT_ICON={swim:'🏊',bike:'🚴',run:'🏃',gym:'🏋️',pilates:'🧘',brick:'⚡'};
 
 function sl(){
+  const sport=document.getElementById('ls').value;
+  const noZone=sport==='gym'||sport==='pilates';
   const e={
-    date:document.getElementById('ld').value,
-    sport:document.getElementById('ls').value,
-    zone:document.getElementById('lz').value,
-    dist:parseFloat(document.getElementById('ldi').value)||0,
-    dur:parseFloat(document.getElementById('ldu').value)||0,
-    hr:parseFloat(document.getElementById('lh').value)||0,
-    hrmax:parseFloat(document.getElementById('lhmax').value)||0,
-    pace:document.getElementById('lpace').value||'',
-    cal:parseFloat(document.getElementById('lcal').value)||0,
+    date:document.getElementById('ld').value, sport,
+    zone:noZone?'—':document.getElementById('lz').value,
+    dur:fv('ldu'), dist:fv('ldi'), dist2:fv('ldi2'),
+    hr:fv('lh'), hrmax:fv('lhmax'), pace:fv('lpace'),
+    spd:fv('lspd'), pow:fv('lpow'), cad:fv('lcad'),
+    cal:fv('lcal'), ele:fv('lele'), vo2:fv('lvo2'),
+    swolf:fv('lswol'), strokes:fv('lstk'), srate:fv('lsrate'), laps:fv('llaps'),
     rpe:parseInt(document.getElementById('lr').value),
-    notes:document.getElementById('ln').value,
-    id:Date.now()
+    notes:document.getElementById('ln').value, id:Date.now()
   };
+  if(!e.dur){alert('Informe pelo menos a duração do treino.');return;}
   logs.unshift(e);
   try{localStorage.setItem('im703v3',JSON.stringify(logs));}catch(err){}
   renderLogs(); ua();
-  // Re-render today if date matches
-  if(e.date === new Date().toISOString().slice(0,10)){
-    const diff=Math.floor((new Date()-PS)/86400000/7);
-    const wi=Math.max(0,Math.min(PLAN.length-1,diff));
-    renderTodayWorkouts(new Date(),PLAN[wi]);
-    renderWeekZ2();
-    document.getElementById('ts').textContent=logs.length;
-  }
+  const diff=Math.floor((new Date()-PS)/86400000/7);
+  const wi=Math.max(0,Math.min(PLAN.length-1,diff));
+  renderTodayWorkouts(new Date(),PLAN[wi]); renderWeekZ2();
   clearForm();
   const msg=document.getElementById('save-msg');
-  msg.textContent='✓ Treino salvo!';
-  setTimeout(()=>msg.textContent='',3000);
+  msg.textContent='✓ Treino salvo!'; setTimeout(()=>msg.textContent='',3000);
 }
 
 function clearForm(){
-  ['ldi','ldu','lh','lhmax','lpace','lcal','ln'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
-  document.getElementById('lr').value=6; document.getElementById('rv').textContent='6';
+  ALL_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const ln=document.getElementById('ln');if(ln)ln.value='';
+  const lr=document.getElementById('lr');if(lr){lr.value=6;document.getElementById('rv').textContent='6';}
   garminImages=[];
-  document.getElementById('garmin-previews').innerHTML='';
-  document.getElementById('garmin-result').classList.remove('show');
-  document.getElementById('garmin-analyzing').classList.remove('show');
-  document.getElementById('garmin-input').value='';
+  const gp=document.getElementById('garmin-previews');if(gp)gp.innerHTML='';
+  const gr=document.getElementById('garmin-result');if(gr)gr.classList.remove('show');
+  const ga=document.getElementById('garmin-analyzing');if(ga)ga.classList.remove('show');
+  const gi=document.getElementById('garmin-input');if(gi)gi.value='';
+}
+
+function metaRow(l){
+  const it=[];
+  if(l.dur)    it.push(`⏱ <strong>${l.dur}min</strong>`);
+  if(l.dist && l.sport==='swim') it.push(`📏 <strong>${l.dist}m</strong>`);
+  else if(l.dist && l.sport==='brick') it.push(`🚴 <strong>${l.dist}km bike</strong>`);
+  else if(l.dist) it.push(`📏 <strong>${l.dist}km</strong>`);
+  if(l.dist2)  it.push(`🏃 <strong>${l.dist2}km corrida</strong>`);
+  if(l.pace && l.sport==='swim') it.push(`🌊 <strong>${l.pace}/100m</strong>`);
+  else if(l.pace) it.push(`🏃 <strong>${l.pace}/km</strong>`);
+  if(l.spd)    it.push(`⚡ <strong>${l.spd}km/h</strong>`);
+  if(l.hr)     it.push(`💓 <strong>${l.hr}bpm</strong>`);
+  if(l.hrmax)  it.push(`💓max <strong>${l.hrmax}bpm</strong>`);
+  if(l.pow)    it.push(`⚡ <strong>${l.pow}W</strong>`);
+  if(l.cad && l.sport==='bike') it.push(`🔄 <strong>${l.cad}rpm</strong>`);
+  else if(l.cad) it.push(`👟 <strong>${l.cad}ppm</strong>`);
+  if(l.swolf)  it.push(`🏊 SWOLF <strong>${l.swolf}</strong>`);
+  if(l.laps)   it.push(`🔢 <strong>${l.laps} larg.</strong>`);
+  if(l.ele)    it.push(`⛰ <strong>${l.ele}m</strong>`);
+  if(l.cal)    it.push(`🔥 <strong>${l.cal}kcal</strong>`);
+  if(l.vo2)    it.push(`📊 VO2 <strong>${l.vo2}</strong>`);
+  it.push(`RPE <strong>${l.rpe}/10</strong>`);
+  return it.map(i=>`<span style="color:var(--muted);font-size:12px;">${i}</span>`).join('');
 }
 
 function renderLogs(){
@@ -912,35 +1229,28 @@ function renderLogs(){
   if(!logs.length){el.innerHTML='<div style="text-align:center;color:var(--muted);font-size:13px;padding:2rem;">Nenhum treino registrado ainda.</div>';return;}
   el.innerHTML=logs.slice(0,30).map(l=>`
     <div class="le" id="log-${l.id}">
-      <div style="display:flex;justify-content:space-between;margin-bottom:5px;align-items:center;">
-        <span style="font-size:11px;font-family:'DM Mono',monospace;font-weight:700;color:${SC[l.sport]||'#aaa'}">${SL[l.sport]||l.sport} · ${l.zone}</span>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;align-items:center;">
+        <span style="font-size:12px;font-family:'DM Mono',monospace;font-weight:700;color:${SC[l.sport]||'#aaa'}">
+          ${SPORT_ICON[l.sport]||''} ${SL[l.sport]||l.sport}${l.zone&&l.zone!=='—'?' · '+l.zone:''}
+        </span>
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">${l.date}</span>
-          <button onclick="deleteLog(${l.id})" title="Deletar treino" style="background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.3);color:var(--run);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">×</button>
+          <button onclick="deleteLog(${l.id})" style="background:rgba(230,57,70,.1);border:1px solid rgba(230,57,70,.3);color:var(--run);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:14px;line-height:1;">×</button>
         </div>
       </div>
-      <div style="display:flex;gap:12px;font-size:12px;color:var(--muted);flex-wrap:wrap;">
-        ${l.dist?`<span>📏 <strong style="color:var(--text)">${l.dist}${l.sport==='swim'?'m':'km'}</strong></span>`:''}
-        ${l.dur?`<span>⏱ <strong style="color:var(--text)">${l.dur}min</strong></span>`:''}
-        ${l.hr?`<span>💓 <strong style="color:var(--text)">${l.hr}bpm</strong></span>`:''}
-        ${l.hrmax?`<span>💓max <strong style="color:var(--text)">${l.hrmax}bpm</strong></span>`:''}
-        ${l.pace?`<span>🏃 <strong style="color:var(--text)">${l.pace}</strong></span>`:''}
-        <span>RPE <strong style="color:var(--text)">${l.rpe}/10</strong></span>
-      </div>
-      ${l.notes?`<div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;">"${l.notes}"</div>`:''}
+      <div style="display:flex;gap:10px;flex-wrap:wrap;line-height:1.8;">${metaRow(l)}</div>
+      ${l.notes?`<div style="font-size:11px;color:var(--muted);margin-top:5px;font-style:italic;">"${l.notes}"</div>`:''}
     </div>`).join('');
 }
 
 function deleteLog(id){
   if(!confirm('Deletar este treino?')) return;
-  logs = logs.filter(l => l.id !== id);
-  try{ localStorage.setItem('im703v3', JSON.stringify(logs)); }catch(e){}
+  logs=logs.filter(l=>l.id!==id);
+  try{localStorage.setItem('im703v3',JSON.stringify(logs));}catch(e){}
   renderLogs(); ua();
-  // refresh today view
   const diff=Math.floor((new Date()-PS)/86400000/7);
   const wi=Math.max(0,Math.min(PLAN.length-1,diff));
-  renderTodayWorkouts(new Date(),PLAN[wi]);
-  renderWeekZ2();
+  renderTodayWorkouts(new Date(),PLAN[wi]); renderWeekZ2();
 }
 
 // =================== ANALYSIS ===================
