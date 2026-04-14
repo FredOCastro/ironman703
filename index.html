@@ -819,11 +819,21 @@ function selectWeekDay(dow, colIdx, dateStr){
   }
   document.getElementById('wk-detail-logs').innerHTML = logsHtml;
 
-  // Register shortcut
+  // Register + Export FIT buttons
   const sportDefault = plan ? plan[0].sport : 'run';
-  document.getElementById('wk-detail-reg').innerHTML = `<div style="border-top:1px solid var(--border);padding-top:12px;">
-    <button class="reg-btn-today" onclick="goRegisterDate('${dateStr}','${sportDefault}')">+ Registrar treino neste dia</button>
-  </div>`;
+  const fitButtons = (plan || (dow===3&&ts2?[{sport:'swim'}]:[])).map(w=>`
+    <button onclick="exportWorkoutFit(${dow},${wi_view},'${w.sport}')" style="display:inline-flex;align-items:center;gap:6px;background:rgba(74,158,255,.1);border:1px solid rgba(74,158,255,.3);color:var(--accent3);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Syne',sans-serif;">
+      ⬇ Exportar .FIT ${w.sport==='run'?'Corrida':w.sport==='bike'?'Bike':w.sport==='swim'?'Natação':'Treino'}
+    </button>`).join('');
+
+  document.getElementById('wk-detail-reg').innerHTML = `
+    <div style="border-top:1px solid var(--border);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+      <button class="reg-btn-today" onclick="goRegisterDate('${dateStr}','${sportDefault}')">+ Registrar treino</button>
+      ${fitButtons}
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-top:8px;line-height:1.6;">
+      O arquivo .FIT gerado pode ser importado no <strong style="color:var(--text);">Garmin Connect</strong> → Training & Planning → Workouts → Import Workout. Após importar, sincronize o relógio para o treino aparecer.
+    </div>`;
 
   document.getElementById('wk-day-detail').style.display = 'block';
   setTimeout(()=>document.getElementById('wk-day-detail').scrollIntoView({behavior:'smooth',block:'nearest'}),50);
@@ -1299,6 +1309,243 @@ function st(id,btn){
   btn.classList.add('on');
   if(id==='an') ua();
   if(id==='gh') initConfigTab();
+}
+
+// =================== FIT FILE GENERATOR ===================
+// Implements Garmin FIT binary format for Workout files
+// Spec: https://developer.garmin.com/fit/protocol/
+
+function fitCRC16(data, offset, len){
+  const table=[0x0000,0xCC01,0xD801,0x1400,0xF001,0x3C00,0x2800,0xE401,
+               0xA001,0x6C00,0x7800,0xB401,0x5000,0x9C01,0x8801,0x4400];
+  let crc=0;
+  for(let i=offset;i<offset+len;i++){
+    let b=data[i];
+    crc=(crc>>4)^table[(crc^b)&0x0F];
+    crc=(crc>>4)^table[(crc^(b>>4))&0x0F];
+  }
+  return crc;
+}
+
+function fitWriter(){
+  const buf=[];
+  const write1=(v)=>buf.push(v&0xFF);
+  const write2=(v)=>{buf.push(v&0xFF);buf.push((v>>8)&0xFF);};
+  const write4=(v)=>{buf.push(v&0xFF);buf.push((v>>8)&0xFF);buf.push((v>>16)&0xFF);buf.push((v>>24)&0xFF);};
+  const writeStr=(s,len)=>{for(let i=0;i<len;i++)buf.push(i<s.length?s.charCodeAt(i):0);};
+  return {buf,write1,write2,write4,writeStr};
+}
+
+// FIT sport codes
+const FIT_SPORT={run:1,bike:2,swim:5,gym:4,pilates:4,brick:1};
+// FIT workout step intensity
+const FIT_INTENSITY={warmup:0,active:1,cooldown:2,rest:3};
+// FIT duration type: time=0, distance=1, hrLow=4, hrHigh=5, open=6
+const FIT_DUR={time:0,open:6};
+// FIT target type: speed=0,hr=1,cadence=3,power=4,hrZone=5,none=2
+const FIT_TARGET={none:2,hr:1,hrZone:5};
+
+function buildFitWorkout(dow, weekIdx, sport){
+  const p = PLAN[weekIdx];
+  const ts2 = p.sw >= 5500;
+  const wDet = getWorkoutDetail(sport, dow, p, ts2);
+  const sportCode = FIT_SPORT[sport] || 1;
+  const dayNames=['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+  const sportNames={run:'Corrida',bike:'Bike',swim:'Natacao',gym:'Academia',pilates:'Pilates',brick:'Brick'};
+  const workoutName = `S${p.w}_${dayNames[dow]}_${sportNames[sport]||sport}`;
+
+  // Build steps based on sport and day
+  const steps = buildWorkoutSteps(sport, dow, p, ts2);
+
+  const w = fitWriter();
+
+  // ---- Definition message for file_id (local mesg 0) ----
+  // Definition: header byte = 0x40 | local_mesg_num
+  w.write1(0x40); // definition header, local msg 0
+  w.write1(0);    // reserved
+  w.write1(0);    // little endian
+  w.write2(0);    // global mesg num = 0 (file_id)
+  w.write1(4);    // field count
+  // fields: [field_def_num, size, base_type]
+  w.write1(0); w.write1(1); w.write1(0);   // type (enum)
+  w.write1(1); w.write1(2); w.write1(0x84); // manufacturer (uint16)
+  w.write1(2); w.write1(2); w.write1(0x84); // product (uint16)
+  w.write1(4); w.write1(4); w.write1(0x86); // time_created (uint32)
+
+  // ---- Data message for file_id ----
+  w.write1(0x00); // data header, local msg 0
+  w.write1(5);    // type = workout (5)
+  w.write2(1);    // manufacturer = Garmin (1)
+  w.write2(1);    // product
+  // time_created: seconds since FIT epoch (Dec 31 1989 UTC)
+  const FIT_EPOCH = 631065600; // unix ts of Dec 31 1989 00:00:00 UTC
+  w.write4(Math.floor(Date.now()/1000) - FIT_EPOCH);
+
+  // ---- Definition message for workout (local mesg 1) ----
+  w.write1(0x41); // definition, local msg 1
+  w.write1(0); w.write1(0);
+  w.write2(26);   // global mesg num = 26 (workout)
+  w.write1(4);
+  w.write1(4); w.write1(2); w.write1(0x84); // capabilities
+  w.write1(6); w.write1(1); w.write1(0);    // num_valid_steps
+  w.write1(8); w.write1(16); w.write1(7);   // wkt_name (string 16)
+  w.write1(5); w.write1(1); w.write1(0);    // sport (enum)
+
+  // ---- Data: workout ----
+  w.write1(0x01);
+  w.write2(32);              // capabilities
+  w.write1(steps.length);    // num_valid_steps
+  writeStr16(w, workoutName);
+  w.write1(sportCode);
+
+  // ---- Definition message for workout_step (local mesg 2) ----
+  w.write1(0x42);
+  w.write1(0); w.write1(0);
+  w.write2(27); // global mesg num = 27 (workout_step)
+  w.write1(9);
+  w.write1(0); w.write1(2); w.write1(0x84); // message_index
+  w.write1(2); w.write1(4); w.write1(0x86); // duration_value
+  w.write1(4); w.write1(4); w.write1(0x86); // target_value
+  w.write1(5); w.write1(4); w.write1(0x86); // custom_target_value_low
+  w.write1(6); w.write1(4); w.write1(0x86); // custom_target_value_high
+  w.write1(1); w.write1(1); w.write1(0);    // duration_type (enum)
+  w.write1(3); w.write1(1); w.write1(0);    // target_type (enum)
+  w.write1(7); w.write1(1); w.write1(0);    // intensity (enum)
+  w.write1(8); w.write1(16); w.write1(7);   // notes (string 16)
+  w.write1(9); w.write1(1); w.write1(0);    // equipment (enum)
+
+  // ---- Data: workout steps ----
+  steps.forEach((s,i)=>{
+    w.write1(0x02);
+    w.write2(i);                     // message_index
+    w.write4(s.durVal);              // duration_value (seconds for time-based)
+    w.write4(s.targetVal||0);        // target_value (zone number or 0)
+    w.write4(s.targetLow||0);        // custom_target_value_low (bpm*1000 or 0)
+    w.write4(s.targetHigh||0);       // custom_target_value_high
+    w.write1(s.durType);             // duration_type
+    w.write1(s.targetType);          // target_type
+    w.write1(s.intensity);           // intensity
+    writeStr16(w, s.note||'');       // notes
+    w.write1(0);                     // equipment
+  });
+
+  // ---- Assemble full file with header + CRC ----
+  const dataBytes = w.buf;
+  const dataLen = dataBytes.length;
+
+  // 14-byte header
+  const header = [
+    0x0E,       // header size = 14
+    0x10,       // protocol version
+    0x43, 0x08, // profile version 2115
+    dataLen & 0xFF, (dataLen>>8)&0xFF, (dataLen>>16)&0xFF, (dataLen>>24)&0xFF,
+    0x2E, 0x46, 0x49, 0x54, // ".FIT"
+    0x00, 0x00  // header CRC (calculated below)
+  ];
+  const hCRC = fitCRC16(header, 0, 12);
+  header[12] = hCRC & 0xFF;
+  header[13] = (hCRC >> 8) & 0xFF;
+
+  const all = header.concat(dataBytes);
+  const fileCRC = fitCRC16(all, 0, all.length);
+  all.push(fileCRC & 0xFF);
+  all.push((fileCRC >> 8) & 0xFF);
+
+  return new Uint8Array(all);
+}
+
+function writeStr16(w, s){
+  for(let i=0;i<16;i++) w.buf.push(i<s.length ? s.charCodeAt(i) : 0);
+}
+
+function buildWorkoutSteps(sport, dow, p, ts2){
+  const steps=[];
+  // Helper: create a step
+  const step=(note, durationSec, intensity, targetType, targetLow, targetHigh, durType)=>({
+    note, durVal:durationSec||0, intensity,
+    targetType: targetType||FIT_TARGET.none,
+    targetVal:0, targetLow: targetLow||0, targetHigh: targetHigh||0,
+    durType: durType!==undefined ? durType : FIT_DUR.time
+  });
+
+  // HR ranges in bpm → stored as bpm (FIT stores raw bpm for custom HR target)
+  const Z1L=100, Z1H=115, Z2L=116, Z2H=139, Z3L=140, Z3H=158;
+
+  if(sport==='run'){
+    const isThreshold = dow===4;
+    const isLong      = dow===0;
+    const dur = isLong?Math.round(p.rn*.4):isThreshold?Math.round(p.rn*.3):Math.round(p.rn*.35);
+    if(isThreshold){
+      steps.push(step('Aquecimento Z1 - corra leve',         15*60, FIT_INTENSITY.warmup,  FIT_TARGET.hr, Z1L,  Z1H));
+      for(let i=0;i<3;i++){
+        steps.push(step(`Serie ${i+1} de 3 - Z3 threshold`,   8*60, FIT_INTENSITY.active,  FIT_TARGET.hr, Z3L,  Z3H));
+        steps.push(step('Recuperacao - trote Z1',              3*60, FIT_INTENSITY.rest,    FIT_TARGET.hr, Z1L,  Z1H));
+      }
+      steps.push(step('Esfriamento Z1 - corra bem leve',    10*60, FIT_INTENSITY.cooldown, FIT_TARGET.hr, Z1L,  Z1H));
+    } else {
+      steps.push(step('Aquecimento leve Z1',                  10*60, FIT_INTENSITY.warmup,  FIT_TARGET.hr, Z1L,  Z1H));
+      steps.push(step(`Corrida Z2 - ritmo conversacional`,  (dur-10)*60, FIT_INTENSITY.active, FIT_TARGET.hr, Z2L, Z2H));
+      steps.push(step('Esfriamento - caminhada ou trote',    5*60,  FIT_INTENSITY.cooldown, FIT_TARGET.hr, Z1L,  Z1H));
+    }
+  }
+  else if(sport==='bike'){
+    const isThreshold = dow===2;
+    const isBrick     = dow===6;
+    const dur = isBrick?Math.round(p.bk*.55):Math.round(p.bk*.45);
+    if(isThreshold){
+      steps.push(step('Aquecimento Z2 spin leve',             15*60, FIT_INTENSITY.warmup,  FIT_TARGET.hr, Z2L, Z2H));
+      for(let i=0;i<3;i++){
+        steps.push(step(`Serie ${i+1} de 3 - Z3 threshold`,   8*60, FIT_INTENSITY.active,  FIT_TARGET.hr, Z3L, Z3H));
+        steps.push(step('Recuperacao Z1 spin',                 5*60, FIT_INTENSITY.rest,    FIT_TARGET.hr, Z1L, Z1H));
+      }
+      steps.push(step('Esfriamento Z1',                      10*60, FIT_INTENSITY.cooldown, FIT_TARGET.hr, Z1L, Z1H));
+    } else {
+      steps.push(step('Aquecimento Z1',                       10*60, FIT_INTENSITY.warmup,  FIT_TARGET.hr, Z1L, Z1H));
+      steps.push(step('Bike longa Z2 - FC abaixo de 135',  (dur-10)*60, FIT_INTENSITY.active, FIT_TARGET.hr, Z2L, Z2H));
+      if(isBrick) steps.push(step('Transicao - comece a corrida imediatamente', 0, FIT_INTENSITY.active, FIT_TARGET.none, 0, 0, FIT_DUR.open));
+    }
+  }
+  else if(sport==='swim'){
+    const dist = ts2?Math.round(p.sw*.6):p.sw;
+    steps.push(step('Aquecimento - 200m livre leve',           0, FIT_INTENSITY.warmup,  FIT_TARGET.none, 0, 0, FIT_DUR.open));
+    steps.push(step('Tecnica - 4x50m rolamento e bracada',     0, FIT_INTENSITY.active,  FIT_TARGET.none, 0, 0, FIT_DUR.open));
+    steps.push(step(`Principal - ${dist-400}m Z2 continuo`,    0, FIT_INTENSITY.active,  FIT_TARGET.none, 0, 0, FIT_DUR.open));
+    steps.push(step('Esfriamento - 200m costas ou livre leve', 0, FIT_INTENSITY.cooldown,FIT_TARGET.none, 0, 0, FIT_DUR.open));
+  }
+  else {
+    // gym / pilates / other
+    const dur = sport==='pilates'?60:50;
+    steps.push(step('Aquecimento - 5min leve',    5*60, FIT_INTENSITY.warmup,  FIT_TARGET.none,0,0));
+    steps.push(step('Sessao principal',         (dur-10)*60,FIT_INTENSITY.active,FIT_TARGET.none,0,0));
+    steps.push(step('Esfriamento - alongamento', 5*60, FIT_INTENSITY.cooldown, FIT_TARGET.none,0,0));
+  }
+  return steps;
+}
+
+function exportWorkoutFit(dow, weekIdx, sport){
+  try {
+    const p = PLAN[weekIdx];
+    const ts2 = p.sw >= 5500;
+    const dayNames=['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+    const sportNames={run:'Corrida',bike:'Bike',swim:'Natacao',gym:'Academia',pilates:'Pilates',brick:'Brick'};
+    const filename = `IM703_Sem${p.w}_${dayNames[dow]}_${sportNames[sport]||sport}.fit`;
+
+    const bytes = buildFitWorkout(dow, weekIdx, sport);
+    const blob = new Blob([bytes], {type:'application/octet-stream'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+
+    // Show success tip
+    const tip = document.createElement('div');
+    tip.style.cssText='position:fixed;bottom:20px;right:20px;background:#21262d;border:1px solid rgba(0,212,168,.4);color:#00d4a8;padding:12px 18px;border-radius:10px;font-size:13px;z-index:9999;max-width:320px;line-height:1.6;';
+    tip.innerHTML=`<strong>✓ ${filename}</strong> baixado!<br><span style="color:#7d8590;font-size:11px;">Garmin Connect → Training & Planning → Workouts → Import Workout → sincronize o relógio</span>`;
+    document.body.appendChild(tip);
+    setTimeout(()=>tip.remove(), 6000);
+  } catch(e){
+    alert('Erro ao gerar .FIT: '+e.message);
+  }
 }
 
 init();
